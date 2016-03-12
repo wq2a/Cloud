@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class Auth {
 
+    final static String SP = "\b";
     private static Auth instance = new Auth();
     private String username;
     private String h1;
@@ -39,6 +40,6 @@ public class Auth {
     }
 
     public String toString(){
-        return username+" "+h1;
+        return username+SP+h1;
     }
 }

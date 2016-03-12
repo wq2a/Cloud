@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.lang.*;
+import cloud.server.Protocol;
 
 public class ClientWorker implements Runnable{
     final static String CRLF = "\r\n";
@@ -28,7 +29,7 @@ public class ClientWorker implements Runnable{
             int index=0;
             while((temp=in.readLine()) != null){
                 if(temp.isEmpty()){
-                    out.println(requestStr.toString());
+                    out.println(Protocol.getInstance().process(requestStr.toString()));
                     System.out.println(requestStr.toString());
                     requestStr.setLength(0);
                 }else{

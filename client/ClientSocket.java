@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.*;
  
 public class ClientSocket {
-
+    final static String CRLF = "\r\n";
     private static ClientSocket instance;
     private Socket socket;
     private PrintWriter out;
@@ -47,8 +47,7 @@ public class ClientSocket {
             while((fromServer = in.readLine()) != null){
                 if(fromServer.isEmpty())
                     break;
-                response.append(fromServer);
-
+                response.append(fromServer+CRLF);
             }
         }catch (IOException e) {
             System.err.println("Cannot establish connection. Server may not be up."+e.getMessage());

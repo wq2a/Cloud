@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.io.IOException;
 
 public class Connection {
+    final static String SP = "\b";
     final static String CRLF = "\r\n";
     private String method;
     private StringBuffer requestPropertys;
@@ -16,7 +17,7 @@ public class Connection {
         this.method = method+CRLF;
     }
     public void setRequestProperty(String field,String value){
-        requestPropertys.append(field+": "+value+CRLF);
+        requestPropertys.append(field+":"+SP+value+CRLF);
     }
     public String connect(){
         return ClientSocket.getInstance().getResponse(toString());

@@ -21,10 +21,12 @@ public class ClientSocket {
 
     private void connect(){
         try{
+
             socket = new Socket(hostName,portNumber);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             response = new StringBuffer();
+            System.out.println("established");
         } catch (UnknownHostException e) {
             System.err.println("Host unknown. Cannot establish connection");
         } catch (IOException e) {
@@ -40,6 +42,8 @@ public class ClientSocket {
     }
 
     public String getResponse(String request){
+        if(socket == null)
+            connect();
         try{
             String fromServer;
             response.setLength(0);

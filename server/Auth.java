@@ -11,12 +11,14 @@ public class Auth {
     private String h1;
     private String h2;
     private String salt;
+    private boolean isAuthorized;
 
     private Auth(){
         username = "";
         h1 = "";
         h2 = "";
         salt = "";
+        isAuthorized = false;
     }
 
     private String SHA_256(String str){
@@ -36,13 +38,7 @@ public class Auth {
         return String.format("%064x", new BigInteger(1, bytes));
     }
 
-    public void setAccount(String username,String h1){
-        this.username = username;
-        this.h1 = h1;
-        this.salt = Random();
-    }
-
-    public boolean isValidate(){
+    private boolean checkValidate(){
         if(this.username.isEmpty()||this.h1.isEmpty()||this.salt.isEmpty())
             return false;
         this.h2 = SHA_256(this.salt+h1);
@@ -50,6 +46,18 @@ public class Auth {
         return true;
     }
 
+    public void setAccount(String username,String h1){
+        this.username = username;
+        this.h1 = h1;
+        this.salt = Random();
+    }
+
+    public boolean isAuthorized(){
+        if(isAuthorized)
+            return true;
+        return checkValidate();
+    }
+    
     public String toString(){
         return username+"\n"+h1+"\n"+salt+"\n"+h2;
     }

@@ -11,21 +11,32 @@ import java.util.Set;
 public class Protocol {
     final static String CRLF = "\r\n";
     final static String SP = "\b";
+
     final static String METHOD = "Method";
     final static String GET = "GET";
     final static String PUT = "PUT";
     final static String DELETE = "DELETE";
     final static String POST = "POST";
-    final static String STATUS = "status";
-    private static Protocol instance;
+
+    final static String STATUS = "Status";
+    final static String OK = "200";
+    final static String BADREQUEST = "400";
+    final static String UNAUTHORIZED = "401";
+    final static String NOTFOUND = "404";
+
+    final static String CONNECTION = "Connection";
+    final static String CLOSE = "close";
+
     private HashMap<String,String> requestMap;
     private HashMap<String,String> responseMap;
     private StringBuffer response;
+    private boolean isClosed;
 
-    private Protocol(){
+    Protocol(){
         responseMap = new HashMap<String,String>();
         requestMap = new HashMap<String,String>();
         response = new StringBuffer();
+        isClosed = false;
     }
 
     private String generator(){
@@ -41,10 +52,10 @@ public class Protocol {
 
     private String response(){
         if(requestMap.isEmpty()||requestMap.get(METHOD)==null){
-            responseMap.put(STATUS,"400");
+            responseMap.put(STATUS,BADREQUEST);
             return generator();
         }
-        responseMap.put(STATUS,"200");
+        responseMap.put(STATUS,OK);
         // 
         switch(requestMap.get(METHOD)){
             case GET:
@@ -56,17 +67,15 @@ public class Protocol {
                 break;
             case POST:
                 responseMap.put("type",POST);
+                if(requestMap.get(CONNECTION)!=null&&requestMap.get(CONNECTION).equals(CLOSE)){
+                    responseMap.put(CONNECTION,CLOSE);
+                    isClosed = true;
+                }
                 break;
             default:
-                responseMap.put(STATUS,"400");
+                responseMap.put(STATUS,BADREQUEST);
         }
         return generator();
-    }
-
-    public static Protocol getInstance(){
-        if (instance == null)
-            instance = new Protocol();
-        return instance;
     }
 
     public String process(String request){
@@ -78,12 +87,16 @@ public class Protocol {
                 if(i == 0){
                     requestMap.put(METHOD,r[i]);
                 }else{
-                    String[] property = r[i].split(SP);
-                    requestMap.put(property[0],property[1]);
+                    String[] property = r[i].split(":");
+                    requestMap.put(property[0],property[1].trim());
                 }
             }
         }
         return response();
+    }
+
+    public boolean isClosed(){
+        return isClosed;
     }
 
 }

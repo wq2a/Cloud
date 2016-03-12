@@ -19,24 +19,26 @@ public class ClientWorker implements Runnable{
     }
 
     private void process(){
+        Protocol protocol = new Protocol();
         StringBuffer requestStr = new StringBuffer();
         StringBuffer responseStr = new StringBuffer();
         String temp;
-        try{
-            BufferedReader in = new BufferedReader(
+        try(BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-            int index=0;
+            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);){
             while((temp=in.readLine()) != null){
                 if(temp.isEmpty()){
-                    out.println(Protocol.getInstance().process(requestStr.toString()));
+                    out.println(protocol.process(requestStr.toString()));
                     System.out.println(requestStr.toString());
+                    if(protocol.isClosed())
+                        break;
                     requestStr.setLength(0);
                 }else{
                     requestStr.append(temp+CRLF);
-                }                  
-                index++;
+                }
             }
+            System.out.println("closed");
+            socket.close();
         }catch(IOException e){
             e.printStackTrace();
         }

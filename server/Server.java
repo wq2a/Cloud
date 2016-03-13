@@ -8,6 +8,7 @@ import cloud.server.ClientWorker;
 
 public class Server {
     public static void main(String[] args){
+        DBManager.getInstance().create();
         try{
             ServerSocket serverSocket = 
                 new ServerSocket(Integer.parseInt(args[0]));

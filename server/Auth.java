@@ -57,7 +57,7 @@ public class Auth {
             return true;
         return checkValidate();
     }
-    
+
     public String toString(){
         return username+"\n"+h1+"\n"+salt+"\n"+h2;
     }

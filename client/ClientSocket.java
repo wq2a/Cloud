@@ -16,6 +16,7 @@ public class ClientSocket {
     private ClientSocket(){
         hostName = "localhost";
         portNumber = 9900;
+        response = new StringBuffer();
         connect();
     }
 
@@ -25,7 +26,6 @@ public class ClientSocket {
             socket = new Socket(hostName,portNumber);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            response = new StringBuffer();
             System.out.println("established");
         } catch (UnknownHostException e) {
             System.err.println("Host unknown. Cannot establish connection");
@@ -53,7 +53,7 @@ public class ClientSocket {
                     break;
                 response.append(fromServer+CRLF);
             }
-        }catch (IOException e) {
+        }catch(Exception e){
             System.err.println("Cannot establish connection. Server may not be up."+e.getMessage());
         }
         return response.toString();

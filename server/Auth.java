@@ -4,20 +4,20 @@ import java.math.*;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import cloud.server.User;
+import cloud.server.DBManager;
 
 public class Auth {
-
-    private String username;
-    private String h1;
-    private String h2;
-    private String salt;
+    final static String SP = "\b";
+    private User user;
     private boolean isAuthorized;
 
-    private Auth(){
-        username = "";
-        h1 = "";
-        h2 = "";
-        salt = "";
+    Auth(){
+        user = new User();
         isAuthorized = false;
     }
 
@@ -39,26 +39,53 @@ public class Auth {
     }
 
     private boolean checkValidate(){
-        if(this.username.isEmpty()||this.h1.isEmpty()||this.salt.isEmpty())
+        if(user.isEmpty())
             return false;
-        this.h2 = SHA_256(this.salt+h1);
-        System.out.println(toString());
-        return true;
+        return user.getH2().equals(SHA_256(user.getSalt()+user.getH1()));
     }
 
-    public void setAccount(String username,String h1){
-        this.username = username;
-        this.h1 = h1;
-        this.salt = Random();
+    // fetch user info from client
+    public void setUser(User user){
+        this.user = user;
+    }
+    public void searchUser(){
+        user = DBManager.getInstance().searchUser(user);
+    }
+    // for fetch user info from database
+    public User getUser(){
+        return user;
+    }
+    // for new user
+    public void insertUser(User user){
+        setUser(user);
+        user.setSalt(Random());
+        user.setH2(SHA_256(user.getSalt()+user.getH1()));
+        DBManager.getInstance().insertUser(user);
+    }
+    // admin for test
+    public void insertAdmin(User user,String pass){
+        setUser(user);
+        user.setSalt(Random());
+        user.setH2(SHA_256(user.getSalt()+SHA_256(user.getUsername()+pass)));
+        DBManager.getInstance().insertUser(user);
     }
 
-    public boolean isAuthorized(){
+    public boolean isAuthorized(HashMap<String,String> requestMap){
         if(isAuthorized)
             return true;
-        return checkValidate();
+        if(requestMap.get("Auth") == null)
+            return false;
+        String[] property = requestMap.get("Auth").split(SP);
+        if(property.length>1){
+            user.setUsername(property[0]);
+            user.setH1(property[1]);
+            searchUser();
+            isAuthorized = checkValidate();
+        }
+        return isAuthorized;
     }
 
     public String toString(){
-        return username+"\n"+h1+"\n"+salt+"\n"+h2;
+        return user.getUsername()+"\n"+user.getH1()+"\n"+user.getSalt()+"\n"+user.getH2();
     }
 }

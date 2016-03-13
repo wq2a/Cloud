@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import cloud.server.Auth;
 
 public class Protocol {
     final static String CRLF = "\r\n";
@@ -32,11 +33,14 @@ public class Protocol {
     private StringBuffer response;
     private boolean isClosed;
 
+    private Auth auth;
+
     Protocol(){
         responseMap = new HashMap<String,String>();
         requestMap = new HashMap<String,String>();
         response = new StringBuffer();
         isClosed = false;
+        auth = new Auth();
     }
 
     private String generator(){
@@ -55,6 +59,12 @@ public class Protocol {
             responseMap.put(STATUS,BADREQUEST);
             return generator();
         }
+
+        if(!auth.isAuthorized(requestMap)){
+            responseMap.put(STATUS,UNAUTHORIZED);
+            return generator();
+        }
+        
         responseMap.put(STATUS,OK);
         // 
         switch(requestMap.get(METHOD)){

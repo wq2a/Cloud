@@ -12,32 +12,33 @@ public class Client {
     public static void main(String[] args){
     	// generate auth info
     	Auth auth = Auth.getInstance();
-    	auth.setAccount("wanjiang","qian111");
     	
-        System.out.println("***** first socket");
+        System.out.println("***** first socket, without auth 401");
 
     	Connection cnn = new Connection();
     	cnn.setRequestMethod("GET");
     	cnn.setRequestProperty("User-agent","xxxx/1.0");
     	System.out.println(cnn.connect());
 
-    	System.out.println("***** post with auth");
+    	System.out.println("***** post with auth but wrong password 401");
 
     	cnn = new Connection();
     	cnn.setRequestMethod("POST");
     	cnn.setRequestProperty("User-agent1","xxxx/1.0");
+        auth.setAccount("admin","wrongpassword");
     	cnn.setRequestProperty("Auth",auth.toString());
     	System.out.println(cnn.connect());
 
-        System.out.println("***** bad post request");
+        System.out.println("***** bad post request but login with right password 400");
 
         cnn = new Connection();
         cnn.setRequestMethod("POSTo");
         cnn.setRequestProperty("User-agent1","xxxx/1.0");
+        auth.setAccount("admin","password");
         cnn.setRequestProperty("Auth",auth.toString());
         System.out.println(cnn.connect());
 
-        System.out.println("***** close socket 1");
+        System.out.println("***** close socket 1 already login 200");
 
         cnn = new Connection();
         cnn.setRequestMethod("POST");
@@ -45,15 +46,16 @@ public class Client {
         cnn.setRequestProperty("Connection","close");
         System.out.println(cnn.connect());
 
-        System.out.println("***** reconnect socket");
+        System.out.println("***** reconnect socket and login with right password 200");
 
         cnn = new Connection();
-        cnn.setRequestMethod("GET");
+        cnn.setRequestMethod("POST");
         cnn.setRequestProperty("User-agent1","xxxx/1.0");
+        cnn.setRequestProperty("Auth",auth.toString());
         cnn.setRequestProperty("Path","/dir/l/");
         System.out.println(cnn.connect());
 
-        System.out.println("***** PUT");
+        System.out.println("***** PUT already login 200");
 
         cnn = new Connection();
         cnn.setRequestMethod("PUT");

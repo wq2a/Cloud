@@ -2,11 +2,11 @@
 A prototype of the cloud environment.
 ## Getting Started
 ### Prerequisities
-Need to run mysql on the server side.
+Before run the server you need to run mysql first, but no need to create the database.
 ## Built With
 * Makefile
 ```
-make server
+make server - will create the required database and tables at first time.
 make client
-make clean
+make clean - remove all class files
 ```

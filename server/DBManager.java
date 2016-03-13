@@ -31,13 +31,19 @@ public class DBManager{
 	}
 	public void create(){
 		try{
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/?useSSL=false",USER,PASSWORD);
+			stmt = conn.createStatement();
+			String sql = "CREATE DATABASE IF NOT EXISTS cloud";
+			stmt.executeUpdate(sql);
+			conn.close();
+			conn = null;
 			stmt = getConnection().createStatement();
-			String sql = "CREATE TABLE IF NOT EXISTS user" +
-                   		"(id INTEGER not NULL, " +
-                   		" username VARCHAR(255), " + 
-                   		" h2 VARCHAR(255), " + 
-                   		" salt VARCHAR(255), " + 
-                   		" PRIMARY KEY ( id ))";
+			sql = "CREATE TABLE IF NOT EXISTS user" +
+                  "(id INTEGER not NULL, " +
+                  " username VARCHAR(255), " + 
+                  " h2 VARCHAR(255), " + 
+                  " salt VARCHAR(255), " + 
+                  " PRIMARY KEY ( id ))";
 			stmt.executeUpdate(sql);
 		}catch(SQLException se){
       		se.printStackTrace();

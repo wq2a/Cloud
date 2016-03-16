@@ -1,5 +1,9 @@
 package cloud.client;
 
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.lang.*;
@@ -7,7 +11,7 @@ import java.security.MessageDigest;
 import java.io.IOException;
 import cloud.client.Auth;
 
-public class Client {
+public class Client extends JPanel{
 
     public static void main(String[] args){
     	// generate auth info
@@ -80,6 +84,20 @@ public class Client {
         cnn.setRequestMethod("POST");
         cnn.setRequestProperty("User-agent1","xxxx/1.0");
         cnn.setRequestProperty("Connection","close");
-        System.out.println(cnn.connect());
+        //System.out.println(cnn.connect());
+
+        JFrame f = new JFrame();
+        final JLabel label = new JLabel(cnn.connect().toString());
+        f.add(label);
+        f.setSize(500,500);
+        f.addComponentListener(new ComponentAdapter(){
+            public void componentResized(ComponentEvent event){
+                Component c = (Component)event.getSource();
+                Dimension dim = c.getSize();
+                label.setText(dim.width+","+dim.height);
+                // System.out.println(dim.width+","+dim.height);
+            }
+        });
+        f.setVisible(true);
     }
 }

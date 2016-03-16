@@ -6,7 +6,7 @@ Before run the server you need to run mysql first, but no need to create the dat
 ### Protocol (HTTP like protocol)
 In this project, we will generate HTTP like protocol.
 ####Request
-Several types of requests will be considered in this project, for example, GET, POST, PUT and DELETE. The GET method is used to get a file or get the name list of a directory. The POST method is used to check authentication or close the connect. The PUT method is used to upload a file. The DDELETE method is used to delete a file on cloud. Meanwhile, user cloud define any type of property in the request.
+Several types of requests will be considered in this project, for example, GET, POST, PUT and DELETE. The GET method is used to get a file or get the name list of a directory. The POST method is used to check authentication or close the connect. The PUT method is used to upload a file. The DELETE method is used to delete a file on cloud. Meanwhile, user cloud define any type of property in the request.
 #### Response
 The Status code is the same as HTTP protocol, we will use 200, 401, 404 and so on.
 ### Salt (cryptography)

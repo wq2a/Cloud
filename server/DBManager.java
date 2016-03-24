@@ -77,8 +77,10 @@ public class DBManager{
 			      "')";
 			if(stmt.executeUpdate(sql)==0)
 				return false;
+			
 			FileManager fm = new FileManager(user);
 			fm.mkdir("");
+
 		}catch(SQLException se){
       		se.printStackTrace();
    		}catch(Exception e){
@@ -113,6 +115,8 @@ public class DBManager{
 			conn.close();
 			conn = null;
 			// delete data 
+			FileManager fm = new FileManager();
+			fm.delROOT();
 		}catch(SQLException se){
       		se.printStackTrace();
    		}catch(Exception e){
@@ -142,10 +146,15 @@ public class DBManager{
                   " PRIMARY KEY ( id ))";
 			stmt.executeUpdate(sql);
 
+			FileManager fm = new FileManager();
+			fm.mkdirROOT();
+
 			User user = new User();
 			user.setUsername("admin");
 			Auth auth = new Auth();
 			auth.insertAdmin(user,"password");
+			fm = new FileManager(user);
+			fm.mkdir("");
 
 		}catch(SQLException se){
       		se.printStackTrace();

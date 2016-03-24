@@ -1,6 +1,7 @@
 package cloud.client;
 import java.io.*;
 import java.net.*;
+import cloud.client.FileManager;
  
 public class ClientSocket {
     final static String CRLF = "\r\n";
@@ -40,13 +41,24 @@ public class ClientSocket {
         return instance;
     }
 
-    public String getResponse(String request){
+    public String getResponse(String request,FileManager fm){
         if(socket == null)
             connect();
         try{
             String fromServer;
             response.setLength(0);
+            
             out.println(request);
+
+            if(fm != null){
+                File fo = new File(fm.aPath(fm.getP()));
+                byte[] mybytearray = new byte[(int) fo.length()];
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
+                bis.read(mybytearray, 0, mybytearray.length);
+                OutputStream os = socket.getOutputStream();
+                os.write(mybytearray, 0, mybytearray.length);
+            }
+
             System.out.println(request);
             while((fromServer = in.readLine()) != null){
                 if(fromServer.isEmpty())

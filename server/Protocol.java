@@ -11,7 +11,7 @@ import cloud.server.Auth;
 
 public class Protocol {
     final static String CRLF = "\r\n";
-    final static String SP = "\b";
+    final static String SP = " ";
 
     final static String METHOD = "Method";
     final static String GET = "GET";
@@ -54,7 +54,7 @@ public class Protocol {
         return response.toString();
     }
 
-    private String response(){
+    public String response(){
         if(requestMap.isEmpty()||requestMap.get(METHOD)==null){
             responseMap.put(STATUS,BADREQUEST);
             return generator();
@@ -92,7 +92,8 @@ public class Protocol {
         return generator();
     }
 
-    public String process(String request){
+    public int process(String request){
+        int length=0;
         requestMap.clear();
         responseMap.clear();
         if(!request.isEmpty()){
@@ -103,10 +104,21 @@ public class Protocol {
                 }else{
                     String[] property = r[i].split(":");
                     requestMap.put(property[0],property[1].trim());
+                    if(property[0].equals("Length")){
+                        length = Integer.parseInt(property[1].trim());
+                    }
                 }
             }
         }
-        return response();
+        return length;
+        // return response();
+    }
+
+    public void processFile(String datafile){
+        System.out.println("~~~~~~~");
+        System.out.println(requestMap.get("Path"));
+        System.out.println(datafile);
+        System.out.println("~~~~~~~");
     }
 
     public boolean isClosed(){

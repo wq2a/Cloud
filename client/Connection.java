@@ -33,9 +33,11 @@ public class Connection {
     private String method;
     private StringBuffer requestPropertys;
     private HashMap<String,String> response;
+    private FileManager fm;
     Connection(){
         requestPropertys = new StringBuffer();
         response = new HashMap<String,String>();
+        fm = null;
     }
     public void setRequestMethod(String method){
         this.method = method+CRLF;
@@ -49,6 +51,10 @@ public class Connection {
     public void setRequestProperty(String field,String value){
         if(field.equals("Path") && value.length()>0 
                 && !(value.substring(value.length()-1)).equals("/")){
+            
+            fm = new FileManager(value);
+            setRequestProperty("Length",fm.getLength(value));
+
             setRequestProperty("Connection","close");
         }
         requestPropertys.append(field+":"+SP+value+CRLF);
@@ -63,7 +69,7 @@ public class Connection {
             client = ClientSocket.getInstance();
         }
 
-        temp = client.getResponse(toString());
+        temp = client.getResponse(toString(),fm);
         
         if(!temp.isEmpty()){
             String r[] = temp.split("\\r?\\n");

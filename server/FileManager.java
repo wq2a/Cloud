@@ -7,10 +7,13 @@ import cloud.server.User;
 import cloud.server.Auth;
 
 public class FileManager{
+
 	private final static String ROOTDIR = "data";
 	private final static String SP = "/";
 	private StringBuffer home;
 	private File fo;
+	public FileManager(){}
+
 	public FileManager(Auth auth){
 		home = new StringBuffer();
 		home.append(ROOTDIR).append(SP).append(auth.getUser().getUsername());
@@ -27,6 +30,11 @@ public class FileManager{
 
 	public boolean mkdir(String relativePath){
 		fo = new File(aPath(relativePath));
+		return fo.mkdirs();
+	}
+
+	public boolean mkdirROOT(){
+		fo = new File(ROOTDIR);
 		return fo.mkdirs();
 	}
 
@@ -50,7 +58,7 @@ public class FileManager{
 		}
 	}
 	public boolean del(String relativePath){
-		if(relativePath == null || relativePath.equals("")){
+		if(relativePath == null || relativePath.isEmpty()){
 			return false;
 		}
 		File fo = new File(ROOTDIR+SP+relativePath);
@@ -63,7 +71,20 @@ public class FileManager{
 				return false;
 			}
 		}
-		
+		return true;
+	}
+
+	public boolean delROOT(){
+		File fo = new File(ROOTDIR);
+		if(!fo.exists()){
+			return false;
+		}else{
+			try{
+				delete(fo);
+			} catch(IOException e){
+				return false;
+			}
+		}
 		return true;
 	}
 

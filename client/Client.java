@@ -10,6 +10,7 @@ import java.lang.*;
 import java.security.MessageDigest;
 import java.io.IOException;
 import cloud.client.Auth;
+import cloud.client.FileManager;
 
 
 public class Client extends JPanel{
@@ -20,6 +21,7 @@ public class Client extends JPanel{
         s.append(":"+"\t"+"a:");
         System.out.println(s.toString());
         */
+
         
     	// generate auth info
     	Auth auth = Auth.getInstance();
@@ -46,10 +48,16 @@ public class Client extends JPanel{
         cnn.setRequestProperty("Auth",auth.toString());
         System.out.println(cnn.connect());
 
+        FileManager fm = new FileManager();
+        fm.mk("wo/");
+        fm.mk("wo/data.txt");
+
         System.out.println("***** open socket 2");
 
         cnn = new Connection();
         cnn.setRequestMethod("PUT");
+        cnn.setRequestProperty("Length","123456789");
+        cnn.setRequestProperty("Path","wo/data.txt");
         System.out.println(cnn.connect());
 
         System.out.println("***** open socket 3");

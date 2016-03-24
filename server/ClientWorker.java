@@ -2,6 +2,7 @@ package cloud.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -37,15 +38,37 @@ public class ClientWorker implements Runnable{
     private void process(){
         protocol = new Protocol();
         StringBuffer requestStr = new StringBuffer();
+        
         StringBuffer responseStr = new StringBuffer();
         String temp;
+        int length;
         try(BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(),true);){
             while((temp=in.readLine()) != null){
                 if(temp.isEmpty()){
                     //System.out.println(requestStr.toString());
-                    out.println(protocol.process(requestStr.toString()));
+                    //out.println(protocol.process(requestStr.toString()));
+                    length = protocol.process(requestStr.toString());
+                    System.out.println("Length:"+length);
+                    if(length>0){
+                        /*
+                        datafile.setLength(0);
+                        for(int i=0;i<length;i++){
+                            datafile.append(in.read());
+                        }*/
+                        InputStream in2 = socket.getInputStream();
+                        byte[] bytes = new byte[length];
+                        int count = 0;
+                        while((count+=in2.read(bytes)) < length){
+
+                        }
+                        String datafile = new String(bytes,"UTF-8");
+
+                        protocol.processFile(datafile);
+                    }
+
+                    out.println(protocol.response());
                     
                     if(protocol.isClosed())
                         break;

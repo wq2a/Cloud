@@ -4,6 +4,10 @@ server:	server/*.java
 	javac server/*.java -d .
 	java -cp .:lib/mysql-connector-java.jar cloud.server.Server 9900
 
+serverClean:	server/*.java
+	javac server/*.java -d .
+	java -cp .:lib/mysql-connector-java.jar cloud.server.Server 9900 1
+
 client:	client/*.java
 	javac client/*.java -d .
 	java cloud.client.Client

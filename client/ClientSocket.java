@@ -13,7 +13,7 @@ public class ClientSocket {
     private String hostName;
     private int portNumber;
 
-    private ClientSocket(){
+    ClientSocket(){
         hostName = "localhost";
         portNumber = 9900;
         response = new StringBuffer();
@@ -22,7 +22,6 @@ public class ClientSocket {
 
     private void connect(){
         try{
-
             socket = new Socket(hostName,portNumber);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -48,6 +47,7 @@ public class ClientSocket {
             String fromServer;
             response.setLength(0);
             out.println(request);
+            System.out.println(request);
             while((fromServer = in.readLine()) != null){
                 if(fromServer.isEmpty())
                     break;

@@ -3,6 +3,7 @@ package cloud.server;
 import java.sql.*;
 import java.io.*;
 import cloud.server.User;
+import cloud.server.FileManager;
 
 
 public class DBManager{
@@ -76,7 +77,8 @@ public class DBManager{
 			      "')";
 			if(stmt.executeUpdate(sql)==0)
 				return false;
-
+			FileManager fm = new FileManager(user);
+			fm.mkdir("");
 		}catch(SQLException se){
       		se.printStackTrace();
    		}catch(Exception e){
@@ -100,6 +102,24 @@ public class DBManager{
      		return true;
    		}
    		
+	}
+
+	public void cleanCreate(){
+		try{
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/?useSSL=false",USER,PASSWORD);
+			stmt = conn.createStatement();
+			String sql = "DROP DATABASE IF EXISTS cloud";
+			stmt.executeUpdate(sql);
+			conn.close();
+			conn = null;
+			// delete data 
+		}catch(SQLException se){
+      		se.printStackTrace();
+   		}catch(Exception e){
+      		//Handle errors for Class.forName
+      		e.printStackTrace();
+   		}
+		create();
 	}
 
 	public void create(){

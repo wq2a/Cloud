@@ -72,18 +72,22 @@ public class Protocol {
                 responseMap.put("type",GET);
                 break;
             case PUT:
+                // file transferred to server, close socket when finish
+                // ...
+                
                 break;
             case DELETE:
                 break;
             case POST:
                 responseMap.put("type",POST);
-                if(requestMap.get(CONNECTION)!=null&&requestMap.get(CONNECTION).equals(CLOSE)){
-                    responseMap.put(CONNECTION,CLOSE);
-                    isClosed = true;
-                }
+                
                 break;
             default:
                 responseMap.put(STATUS,BADREQUEST);
+        }
+        if(requestMap.get(CONNECTION)!=null&&requestMap.get(CONNECTION).equals(CLOSE)){
+            responseMap.put(CONNECTION,CLOSE);
+            isClosed = true;
         }
         return generator();
     }

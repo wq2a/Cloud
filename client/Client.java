@@ -11,9 +11,16 @@ import java.security.MessageDigest;
 import java.io.IOException;
 import cloud.client.Auth;
 
+
 public class Client extends JPanel{
 
     public static void main(String[] args){
+        /*
+        StringBuffer s  = new StringBuffer();
+        s.append(":"+"\t"+"a:");
+        System.out.println(s.toString());
+        */
+        
     	// generate auth info
     	Auth auth = Auth.getInstance();
     	
@@ -21,40 +28,40 @@ public class Client extends JPanel{
 
     	Connection cnn = new Connection();
     	cnn.setRequestMethod("GET");
-    	cnn.setRequestProperty("User-agent","xxxx/1.0");
     	System.out.println(cnn.connect());
 
     	System.out.println("***** post with auth but wrong password 401");
 
     	cnn = new Connection();
     	cnn.setRequestMethod("POST");
-    	cnn.setRequestProperty("User-agent1","xxxx/1.0");
         auth.setAccount("admin","wrongpassword");
     	cnn.setRequestProperty("Auth",auth.toString());
     	System.out.println(cnn.connect());
 
-        System.out.println("***** bad post request but login with right password 400");
+        System.out.println("***** login with right password 200");
 
         cnn = new Connection();
-        cnn.setRequestMethod("POSTo");
-        cnn.setRequestProperty("User-agent1","xxxx/1.0");
+        cnn.setRequestMethod("POST");
         auth.setAccount("admin","password");
         cnn.setRequestProperty("Auth",auth.toString());
         System.out.println(cnn.connect());
 
-        System.out.println("***** close socket 1 already login 200");
+        System.out.println("***** open socket 2");
 
         cnn = new Connection();
-        cnn.setRequestMethod("POST");
-        cnn.setRequestProperty("User-agent1","xxxx/1.0");
-        cnn.setRequestProperty("Connection","close");
+        cnn.setRequestMethod("PUT");
+        System.out.println(cnn.connect());
+
+        System.out.println("***** open socket 3");
+
+        cnn = new Connection();
+        cnn.setRequestMethod("PUT");
         System.out.println(cnn.connect());
 
         System.out.println("***** reconnect socket and login with right password 200");
 
         cnn = new Connection();
         cnn.setRequestMethod("POST");
-        cnn.setRequestProperty("User-agent1","xxxx/1.0");
         cnn.setRequestProperty("Auth",auth.toString());
         cnn.setRequestProperty("Path","/dir/l/");
         System.out.println(cnn.connect());
@@ -63,28 +70,25 @@ public class Client extends JPanel{
 
         cnn = new Connection();
         cnn.setRequestMethod("PUT");
-        cnn.setRequestProperty("User-agent1","xxxx/1.0");
         cnn.setRequestProperty("Path","/dir/l/file.txt");
         System.out.println(cnn.connect());
 
-        System.out.println("***** close socket 2");
-    	ClientSocket.getInstance().disconnect();
+        //System.out.println("***** close socket 2");
+    	//ClientSocket.getInstance().disconnect();
 
         System.out.println("***** reconnect");
 
         cnn = new Connection();
         cnn.setRequestMethod("PUT");
-        cnn.setRequestProperty("User-agent1","xxxx/1.0");
         cnn.setRequestProperty("Path","/dir/l/file.txt");
         System.out.println(cnn.connect());
 
         System.out.println("***** close socket 1");
-
+        /*
         cnn = new Connection();
         cnn.setRequestMethod("POST");
-        cnn.setRequestProperty("User-agent1","xxxx/1.0");
         cnn.setRequestProperty("Connection","close");
-        //System.out.println(cnn.connect());
+        */
 
         JFrame f = new JFrame();
         final JLabel label = new JLabel(cnn.connect().toString());
@@ -99,5 +103,7 @@ public class Client extends JPanel{
             }
         });
         f.setVisible(true);
+        
+        
     }
 }

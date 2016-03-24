@@ -6,20 +6,36 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.lang.*;
+import java.util.HashMap;
+import java.util.ArrayList;
 import cloud.server.Protocol;
+import cloud.server.Log;
 
 public class ClientWorker implements Runnable{
+    private static HashMap<Integer,ClientWorker> workers = new HashMap<Integer,ClientWorker>();
     final static String CRLF = "\r\n";
     private Socket socket;
-    ClientWorker(Socket socket){
+    private Integer workerID;
+
+    Protocol protocol;
+
+    ClientWorker(Socket socket,Integer workerID){
         this.socket = socket;
+        this.workerID = workerID;
+        workers.put(workerID,this);
     }
+
     public void run(){
+        Log.getInstance().print("["+workerID+"]");
         process();
     }
 
+    public static HashMap<Integer,ClientWorker> getWorkers(){
+        return workers;
+    }
+
     private void process(){
-        Protocol protocol = new Protocol();
+        protocol = new Protocol();
         StringBuffer requestStr = new StringBuffer();
         StringBuffer responseStr = new StringBuffer();
         String temp;
@@ -28,8 +44,9 @@ public class ClientWorker implements Runnable{
             PrintWriter out = new PrintWriter(socket.getOutputStream(),true);){
             while((temp=in.readLine()) != null){
                 if(temp.isEmpty()){
+                    //System.out.println(requestStr.toString());
                     out.println(protocol.process(requestStr.toString()));
-                    System.out.println(requestStr.toString());
+                    
                     if(protocol.isClosed())
                         break;
                     requestStr.setLength(0);
@@ -37,7 +54,8 @@ public class ClientWorker implements Runnable{
                     requestStr.append(temp+CRLF);
                 }
             }
-            System.out.println("closed");
+            Log.getInstance().print("["+workerID+"]"+"closed");
+            workers.remove(workerID);
             socket.close();
         }catch(IOException e){
             e.printStackTrace();

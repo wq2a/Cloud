@@ -12,7 +12,7 @@ import cloud.server.User;
 import cloud.server.DBManager;
 
 public class Auth {
-    final static String SP = "\b";
+    final static String SP = " ";
     private User user;
     private boolean isAuthorized;
 

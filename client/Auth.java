@@ -1,3 +1,4 @@
+//seashore
 package cloud.client;
 
 import java.math.*;
@@ -6,7 +7,7 @@ import java.io.IOException;
 
 public class Auth {
 
-    final static String SP = "\b";
+    final static String SP = " ";
     private static Auth instance = new Auth();
     private String username;
     private String h1;
@@ -20,7 +21,7 @@ public class Auth {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(str.getBytes("UTF-8"));
             return String.format("%064x", new BigInteger(1, md.digest()));
-        }catch(Exception e){
+        } catch(Exception e){
             return null;
         }
     }

@@ -7,10 +7,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import cloud.client.Info;
 
 public class Connection {
-    final static String SP = "\b";
+    final static String SP = " ";
     final static String CRLF = "\r\n";
+
+    final static String GET = "GET";
+    final static String PUT = "PUT";
+    final static String DELETE = "DELETE";
+    final static String POST = "POST";
 
     final static String STATUS = "Status";
     final static String OK = "200";
@@ -18,8 +24,11 @@ public class Connection {
     final static String UNAUTHORIZED = "401";
     final static String NOTFOUND = "404";
     
+    final static String AGENT = "User-agent";
+    final static String LANGUAGE = "Language";
     final static String CONNECTION = "Connection";
     final static String CLOSE = "close";
+
 
     private String method;
     private StringBuffer requestPropertys;
@@ -30,13 +39,32 @@ public class Connection {
     }
     public void setRequestMethod(String method){
         this.method = method+CRLF;
+        if(method.equals(PUT)){
+            setRequestProperty("Auth",Auth.getInstance().toString());
+            setRequestProperty("Connection","close");
+        }
+        setRequestProperty(AGENT,Info.getInstance().getOS());
+        setRequestProperty(LANGUAGE,Info.getInstance().getLanguage());
     }
     public void setRequestProperty(String field,String value){
+        if(field.equals("Path") && value.length()>0 
+                && !(value.substring(value.length()-1)).equals("/")){
+            setRequestProperty("Connection","close");
+        }
         requestPropertys.append(field+":"+SP+value+CRLF);
     }
     public HashMap<String,String> connect(){
         response.clear();
-        String temp = ClientSocket.getInstance().getResponse(toString());
+        String temp;
+        ClientSocket client;
+        if(method.equals(PUT+CRLF)){
+            client = new ClientSocket();
+        }else{
+            client = ClientSocket.getInstance();
+        }
+
+        temp = client.getResponse(toString());
+        
         if(!temp.isEmpty()){
             String r[] = temp.split("\\r?\\n");
             for(int i=0;i<r.length;i++){
@@ -48,8 +76,9 @@ public class Connection {
                 }
             }
         }
+
         if(response.get(CONNECTION)!=null&&response.get(CONNECTION).equals(CLOSE)){
-            ClientSocket.getInstance().disconnect();
+            client.disconnect();
         }
         return response;
     }

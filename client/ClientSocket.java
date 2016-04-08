@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.*;
 import cloud.client.FileManager;
  
-public class ClientSocket {
+public class ClientSocket{
     final static String CRLF = "\r\n";
     private static ClientSocket instance;
     private Socket socket;

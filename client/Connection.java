@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import cloud.client.Info;
 
-public class Connection {
+public class Connection implements Runnable{
     final static String SP = " ";
     final static String CRLF = "\r\n";
 
@@ -29,17 +29,58 @@ public class Connection {
     final static String CONNECTION = "Connection";
     final static String CLOSE = "close";
 
-
+    private int requestID;
+    private int tag;
     private String method;
     private StringBuffer requestPropertys;
     private HashMap<String,String> response;
     private FileManager fm;
+
+    Callback callback;
+    ReceiverCallback rcallback;
+
     Connection(){
         requestPropertys = new StringBuffer();
         response = new HashMap<String,String>();
         fm = null;
     }
-    public void setRequestMethod(String method){
+    // Copy Constructor
+    Connection(Connection cnn){
+        this();
+        method = cnn.getMethod();
+        requestPropertys = cnn.getRequest();
+        tag = cnn.getTag();
+        requestID = cnn.getRequestID();
+        System.out.println("==="+requestID);
+    }
+
+    Connection(Callback c){
+        this();
+        callback = c;
+        callback.start(this);
+    }
+
+    Connection(Connection cnn, Callback c){
+        this(cnn);
+        callback = c;
+        callback.start(this);
+    }
+
+    Connection(ReceiverCallback rc,Connection cnn, Callback c){ 
+        this(cnn,c);
+        this.rcallback = rc;
+    }
+    public ReceiverCallback getRCallback(){
+        return rcallback;
+    }
+    public String getMethod(){
+        return method;
+    }
+    public StringBuffer getRequest(){
+        return requestPropertys;
+    }
+    public void setRequestMethod(int requestID,String method){
+        this.requestID = requestID;
         this.method = method+CRLF;
         if(method.equals(PUT)){
             setRequestProperty("Auth",Auth.getInstance().toString());
@@ -47,6 +88,15 @@ public class Connection {
         }
         setRequestProperty(AGENT,Info.getInstance().getOS());
         setRequestProperty(LANGUAGE,Info.getInstance().getLanguage());
+    }
+    public void setTag(int tag){
+        this.tag = tag;
+    }
+    public int getTag(){
+        return tag;
+    }
+    public int getRequestID(){
+        return requestID;
     }
     public void setRequestProperty(String field,String value){
         if(field.equals("Path") && value.length()>0 
@@ -59,7 +109,12 @@ public class Connection {
         }
         requestPropertys.append(field+":"+SP+value+CRLF);
     }
-    public HashMap<String,String> connect(){
+
+    public void run(){
+        connect();
+    }
+
+    public void connect(){
         response.clear();
         String temp;
         ClientSocket client;
@@ -86,8 +141,9 @@ public class Connection {
         if(response.get(CONNECTION)!=null&&response.get(CONNECTION).equals(CLOSE)){
             client.disconnect();
         }
-        return response;
+        callback.response(requestID,tag,rcallback,response);
     }
+    
     public String toString(){
         return method+requestPropertys.toString();
     }

@@ -31,6 +31,7 @@ public class Auth {
     }
 
     public void setAccount(String username,String password){
+        reset();
         this.username = username;
         this.h1 = SHA_256(username+password);
     }

@@ -115,10 +115,17 @@ public class Protocol {
     }
 
     public void processFile(String datafile){
-        System.out.println("~~~~~~~");
-        System.out.println(requestMap.get("Path"));
-        System.out.println(datafile);
-        System.out.println("~~~~~~~");
+       // System.out.println("~~~~~~~");
+       // System.out.println(requestMap.get("Path"));
+       // System.out.println(datafile);
+       // System.out.println("~~~~~~~");
+
+        FileManager fm = new FileManager();
+        try{
+            fm.mkfile(requestMap.get("Path"),datafile);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public boolean isClosed(){

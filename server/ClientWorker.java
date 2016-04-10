@@ -47,10 +47,8 @@ public class ClientWorker implements Runnable{
             PrintWriter out = new PrintWriter(socket.getOutputStream(),true);){
             while((temp=in.readLine()) != null){
                 if(temp.isEmpty()){
-                    //System.out.println(requestStr.toString());
-                    //out.println(protocol.process(requestStr.toString()));
                     length = protocol.process(requestStr.toString());
-                    System.out.println("Length:"+length);
+                    // System.out.println("Length:"+length);
                     if(length>0){
                         /*
                         datafile.setLength(0);

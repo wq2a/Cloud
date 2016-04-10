@@ -3,6 +3,10 @@ package cloud.server;
 import java.sql.*;
 import java.io.*;
 import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import cloud.server.User;
 import cloud.server.Auth;
 
@@ -12,11 +16,15 @@ public class FileManager{
 	private final static String SP = "/";
 	private StringBuffer home;
 	private File fo;
-	public FileManager(){}
+	public FileManager(){
+		home = new StringBuffer();
+		home.append(ROOTDIR).append(SP);
+	}
 
 	public FileManager(Auth auth){
 		home = new StringBuffer();
 		home.append(ROOTDIR).append(SP).append(auth.getUser().getUsername());
+		//System.out.println(auth.getUser().getUsername());
 	}
 
 	public FileManager(User user){
@@ -36,6 +44,26 @@ public class FileManager{
 	public boolean mkdirROOT(){
 		fo = new File(ROOTDIR);
 		return fo.mkdirs();
+	}
+
+	public boolean mkfile(String relativePath,String content) throws Exception{
+		File targetFile = new File(aPath(relativePath));
+		File parent = targetFile.getParentFile();
+		if(!parent.exists()){
+			parent.mkdirs();
+    		//throw new IllegalStateException("Couldn't create dir: " + parent);
+		}
+
+		// if file doesnt exists, then create it
+		if (!targetFile.exists()) {
+			targetFile.createNewFile();
+		}
+
+		FileWriter fw = new FileWriter(targetFile.getAbsoluteFile());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(content);
+		bw.close();
+		return true;
 	}
 
 	private void delete(File file) throws IOException{

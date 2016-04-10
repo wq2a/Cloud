@@ -15,12 +15,13 @@ import java.util.HashMap;
 import cloud.client.Auth;
 import cloud.client.FileManager;
 import cloud.client.MyExecutor;
-
+import cloud.client.Utils;
 
 
 public class Client {
 
     public static void main(String[] args){
+        Config.getInstance();
         MyClient client = new MyClient();
         client.start();
     }
@@ -92,19 +93,6 @@ public class Client {
 */
 
 /*
-    	cnn = new Connection();
-    	cnn.setRequestMethod("POST");
-        auth.setAccount("admin","wrongpassword");
-    	cnn.setRequestProperty("Auth",auth.toString());
-    	System.out.println(cnn.connect());
-
-        System.out.println("***** login with right password 200");
-
-        cnn = new Connection();
-        cnn.setRequestMethod("POST");
-        auth.setAccount("admin","password");
-        cnn.setRequestProperty("Auth",auth.toString());
-        System.out.println(cnn.connect());
 
         FileManager fm = new FileManager();
         fm.mk("wo/");

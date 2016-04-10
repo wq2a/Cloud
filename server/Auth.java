@@ -71,8 +71,10 @@ public class Auth {
     }
 
     public boolean isAuthorized(HashMap<String,String> requestMap){
-        if(isAuthorized)
+        if(isAuthorized){
             return true;
+        }
+        
         if(requestMap.get("Auth") == null)
             return false;
         String[] property = requestMap.get("Auth").split(SP);

@@ -26,13 +26,12 @@ public class ClientSocket{
             socket = new Socket(hostName,portNumber);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            System.out.println("established");
+            //System.out.println("established");
         } catch (UnknownHostException e) {
             System.err.println("Host unknown. Cannot establish connection");
         } catch (IOException e) {
             System.err.println("Cannot establish connection. Server may not be up."+e.getMessage());
         }
-        
     }
 
     public static ClientSocket getInstance(){
@@ -59,7 +58,6 @@ public class ClientSocket{
                 os.write(mybytearray, 0, mybytearray.length);
             }
 
-            System.out.println(request);
             while((fromServer = in.readLine()) != null){
                 if(fromServer.isEmpty())
                     break;

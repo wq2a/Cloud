@@ -41,6 +41,10 @@ public class Auth {
         this.h1 = "";
     }
 
+    public String getUsername(){
+        return username;
+    }
+
     public String toString(){
         return username+SP+h1;
     }

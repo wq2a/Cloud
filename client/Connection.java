@@ -51,7 +51,7 @@ public class Connection implements Runnable{
         requestPropertys = cnn.getRequest();
         tag = cnn.getTag();
         requestID = cnn.getRequestID();
-        System.out.println("==="+requestID);
+        fm = cnn.getFm();
     }
 
     Connection(Callback c){
@@ -79,13 +79,16 @@ public class Connection implements Runnable{
     public StringBuffer getRequest(){
         return requestPropertys;
     }
+    public FileManager getFm(){
+        return fm;
+    }
     public void setRequestMethod(int requestID,String method){
         this.requestID = requestID;
         this.method = method+CRLF;
-        if(method.equals(PUT)){
+        /*if(method.equals(PUT)){
             setRequestProperty("Auth",Auth.getInstance().toString());
             setRequestProperty("Connection","close");
-        }
+        }*/
         setRequestProperty(AGENT,Info.getInstance().getOS());
         setRequestProperty(LANGUAGE,Info.getInstance().getLanguage());
     }
@@ -101,13 +104,15 @@ public class Connection implements Runnable{
     public void setRequestProperty(String field,String value){
         if(field.equals("Path") && value.length()>0 
                 && !(value.substring(value.length()-1)).equals("/")){
-            
             fm = new FileManager(value);
             setRequestProperty("Length",fm.getLength(value));
 
             setRequestProperty("Connection","close");
+            requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
+        }else{
+            requestPropertys.append(field+":"+SP+value+CRLF);
         }
-        requestPropertys.append(field+":"+SP+value+CRLF);
+        
     }
 
     public void run(){
@@ -118,6 +123,7 @@ public class Connection implements Runnable{
         response.clear();
         String temp;
         ClientSocket client;
+
         if(method.equals(PUT+CRLF)){
             client = new ClientSocket();
         }else{
@@ -138,7 +144,7 @@ public class Connection implements Runnable{
             }
         }
 
-        if(response.get(CONNECTION)!=null&&response.get(CONNECTION).equals(CLOSE)){
+        if(response.get(CONNECTION)!=null && response.get(CONNECTION).equals(CLOSE)){
             client.disconnect();
         }
         callback.response(requestID,tag,rcallback,response);

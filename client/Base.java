@@ -10,6 +10,7 @@ import cloud.client.FileManager;
 import cloud.client.MyExecutor;
 import cloud.client.Receiver;
 import cloud.client.ClientSocket;
+import cloud.client.Utils;
 
 public abstract class Base extends JPanel implements ReceiverCallback,WindowListener,ActionListener{
 	public abstract HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data);
@@ -38,7 +39,7 @@ public abstract class Base extends JPanel implements ReceiverCallback,WindowList
 
 	public void windowClosing(WindowEvent e) {
         //dispose();
-        System.out.println("windowClosing");
+        //System.out.println("windowClosing");
         ClientSocket.getInstance().disconnect();
     	System.exit(0);
     }
@@ -49,7 +50,9 @@ public abstract class Base extends JPanel implements ReceiverCallback,WindowList
     public void windowDeiconified(WindowEvent e) {}
     public void windowDeactivated(WindowEvent e) {}
     public void windowClosed(WindowEvent e) {
-    	System.out.println("windowClosed");
+    	//System.out.println("windowClosed");
+    	ClientSocket.getInstance().disconnect();
+    	System.exit(0);
     }
     public abstract void actionPerformed(ActionEvent e);
 

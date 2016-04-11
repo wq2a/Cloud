@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 
-public class MyClient extends Base {
+public class Login extends Base {
 
     /* add more Request ID here 
 	   ...
@@ -25,7 +25,7 @@ public class MyClient extends Base {
 		gl = new GridLayout(10, 0);
 		gl.setVgap(6);
 		
-		setTitle("Main");
+		setTitle(" Cloud Login");
         
 		main = new JPanel(gl);
         log = new JLabel("");

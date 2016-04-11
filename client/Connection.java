@@ -29,6 +29,11 @@ public class Connection implements Runnable{
     final static String CONNECTION = "Connection";
     final static String CLOSE = "close";
 
+    public final static int LOGIN = 0;
+    public final static int REGISTER = 1;
+    public final static int UPLOAD_FILE = 2;
+    public final static int GET_PATH = 3;
+
     private int requestID;
     private int tag;
     private String method;

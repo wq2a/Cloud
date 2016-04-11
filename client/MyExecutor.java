@@ -1,5 +1,6 @@
 package cloud.client;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,6 +22,17 @@ public class MyExecutor{
 		}else{
 			ex_m.execute(r);
 		}
-		
+	}
+
+	public void shutdown(){
+		ex_m.shutdown();
+		ex_o.shutdown();
+
+        try
+        {
+            ex_m.awaitTermination(30, TimeUnit.MINUTES);
+            ex_o.awaitTermination(30, TimeUnit.MINUTES);
+        } catch(InterruptedException ex1){
+        }
 	}
 }

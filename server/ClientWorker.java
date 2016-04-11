@@ -27,7 +27,7 @@ public class ClientWorker implements Runnable{
     }
 
     public void run(){
-        Log.getInstance().print("["+workerID+"]");
+        //Log.getInstance().print("["+workerID+"]");
         process();
     }
 
@@ -48,8 +48,8 @@ public class ClientWorker implements Runnable{
             while((temp=in.readLine()) != null){
                 if(temp.isEmpty()){
                     length = protocol.process(requestStr.toString());
-                    // System.out.println("Length:"+length);
-                    if(length>0){
+
+                    if(length > 0){
                         /*
                         datafile.setLength(0);
                         for(int i=0;i<length;i++){
@@ -61,9 +61,9 @@ public class ClientWorker implements Runnable{
                         while((count+=in2.read(bytes)) < length){
 
                         }
-                        String datafile = new String(bytes,"UTF-8");
+                        //String datafile = new String(bytes,"UTF-8");
 
-                        protocol.processFile(datafile);
+                        protocol.processFile(new String(bytes,"UTF-8"));
                     }
 
                     out.println(protocol.response());

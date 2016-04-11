@@ -22,7 +22,7 @@ public class Client {
 
     public static void main(String[] args){
         Config.getInstance();
-        Login client = new Login();
+        LoginActivity client = new LoginActivity();
         client.start();
     }
 }    	

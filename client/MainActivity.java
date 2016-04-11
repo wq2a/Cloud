@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 
-public class Login extends Base {
+public class MainActivity extends Base {
 
     /* add more Request ID here 
 	   ...
@@ -25,7 +25,7 @@ public class Login extends Base {
 		gl = new GridLayout(10, 0);
 		gl.setVgap(6);
 		
-		setTitle(" Cloud Login");
+		setTitle("Main");
         
 		main = new JPanel(gl);
         log = new JLabel("");
@@ -60,7 +60,7 @@ public class Login extends Base {
         
         setContentPane(main);
         pack();
-        setSize(300,500);
+        setSize((int)(Config.SCREENDIM.width*0.7),(int)(Config.SCREENDIM.height*0.7));
         setLocation(Config.SCREENDIM.width/2-getSize().width/2, Config.SCREENDIM.height/2-getSize().height/2);
         setVisible(true);
     }
@@ -77,11 +77,9 @@ public class Login extends Base {
 		setLayout();
 		registerLisener();
 
-        try{
-            test();
-        }catch(InterruptedException e){
-
-        }
+        
+        test();
+        
         
 
 		/*
@@ -128,12 +126,12 @@ public class Login extends Base {
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
 		}
         if(tag == 106){
-            
+            //moveTo(LoginActivity.class);
         }
 	}
 
     // test
-    private void test() throws InterruptedException{
+    private void test() {
         //Auth auth = Auth.getInstance();
         Connection cnn = new Connection();
 
@@ -144,8 +142,6 @@ public class Login extends Base {
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
         request(cnn);
 
-        Thread.sleep(3000);
-
         // 2
         // get username and password and check. username:admin password:password
         cnn = new Connection();
@@ -155,9 +151,7 @@ public class Login extends Base {
         // optional
         cnn.setTag(106);
         request(cnn);
-
-        Thread.sleep(3000);
-
+/*
         // 3
         FileManager fm = new FileManager();
         fm.mk("wo/");
@@ -170,7 +164,7 @@ public class Login extends Base {
         //cnn.setRequestProperty("Length","123456789");
         cnn.setRequestProperty("Path","wo/data.txt");
         request(cnn);
-        
+*/
 
 
     }

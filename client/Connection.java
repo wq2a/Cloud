@@ -144,7 +144,11 @@ public class Connection implements Runnable{
                     response.put(STATUS,r[i]);
                 }else{
                     String[] property = r[i].split(":");
-                    response.put(property[0],property[1].trim());
+                    if(property.length<2){
+                        response.put(property[0],"");
+                    }else{
+                        response.put(property[0],property[1].trim());
+                    }
                 }
             }
         }

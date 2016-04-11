@@ -17,7 +17,6 @@ import cloud.client.Utils;
 
 public abstract class Base extends JFrame implements ReceiverCallback,WindowListener,ActionListener{
     public static Vector<JFrame> layouts = new Vector<JFrame>();
-    //private JPanel instance;
     public abstract void start();
 	public abstract HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data);
 	public abstract void receive(int requestID,int tag,HashMap<String,String> data);
@@ -26,8 +25,9 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
         layouts.add(this);
     }
 
-    /*
+    
     public void moveTo(Class<?> c){
+        //Utils.wait(1);
         this.setVisible(false);
         try {
             Object obj = c.newInstance();
@@ -45,7 +45,7 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
         //MyExecutor.getInstance().shutdown();
         this.dispose();
         System.out.println("moveTo");
-    }*/
+    }
 
     public void exit(){
         //this.dispose();
@@ -82,7 +82,7 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
 
 	public void windowClosing(WindowEvent e) {
         //dispose();
-        exit();
+        //exit();
     }
 
     public void windowOpened(WindowEvent e) {}
@@ -91,7 +91,7 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
     public void windowDeiconified(WindowEvent e) {}
     public void windowDeactivated(WindowEvent e) {}
     public void windowClosed(WindowEvent e) {
-        exit();
+        //exit();
     }
     public abstract void actionPerformed(ActionEvent e);
 

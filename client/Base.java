@@ -50,6 +50,7 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
     public void exit(){
         //this.dispose();
         ClientSocket.getInstance().disconnect();
+        MyExecutor.getInstance().shutdown();
         System.exit(0);
         /*
         for(JFrame j : layouts){

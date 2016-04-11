@@ -15,8 +15,8 @@ public class MainActivity extends Base {
     // views
     private JPanel main;
     private JLabel log;
-    private JTextField username,password;
-    private JButton loginbtn,registerbtn;
+
+    private JButton upload,logout;
     private GridLayout gl;
 
     // init the view layout here
@@ -29,34 +29,20 @@ public class MainActivity extends Base {
         
 		main = new JPanel(gl);
         log = new JLabel("");
-        username = new JTextField("",JTextField.CENTER);
-        password = new JTextField("",JTextField.CENTER);
-        loginbtn = new JButton("login");
-        registerbtn = new JButton("register");
+        upload = new JButton("upload");
+        logout = new JButton("logout");
+
 
         
         log.setBorder(Config.REDBORDER);
-      	username.setBorder(Config.BLACKBORDER);
-      	password.setBorder(Config.BLACKBORDER);
-        loginbtn.setBorder(Config.BLACKBORDER);
-        registerbtn.setBorder(Config.BLACKBORDER);
+        upload.setBorder(Config.BLACKBORDER);
+        logout.setBorder(Config.BLACKBORDER);
         main.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         main.add(Box.createRigidArea(new Dimension(1,0)));
         main.add(log);        
-        main.add(username);
-        main.add(password);
-        main.add(loginbtn);
-		main.add(registerbtn);
-
-        /*main.addComponentListener(new ComponentAdapter(){
-            public void componentResized(ComponentEvent event){
-                Component c = (Component)event.getSource();
-                Dimension dim = c.getSize();
-                //label.setText(dim.width+","+dim.height);
-                // System.out.println(dim.width+","+dim.height);
-            }
-        });*/
+        main.add(upload);
+        main.add(logout);
         
         setContentPane(main);
         pack();
@@ -68,29 +54,14 @@ public class MainActivity extends Base {
     // register event lisener
     private void registerLisener(){
     	addWindowListener(this);
-    	registerbtn.addActionListener(this);
-        loginbtn.addActionListener(this);
+    	upload.addActionListener(this);
+        logout.addActionListener(this);
     }
 
 	// initialize the layout
 	public void start(){
 		setLayout();
 		registerLisener();
-
-        
-        test();
-        
-        
-
-		/*
-		Connection cnn = new Connection();
-		cnn.setRequestMethod(GET_PATH,"GET");
-		request(cnn);
-		for(int index=0;index<10;index++){
-			cnn = new Connection();
-			cnn.setRequestMethod(index,"PUT");
-			request(cnn);
-		}*/
 	}
 
 	/*
@@ -98,15 +69,11 @@ public class MainActivity extends Base {
 	 */
 	public void actionPerformed(ActionEvent e) {
         log.setText(e.getActionCommand());
-        if(e.getActionCommand() == "login") {
-        	/*Auth auth = Auth.getInstance();
-        	Connection cnn = new Connection();
-        	// get username and password and check. username:admin password:password
-        	auth.setAccount(username.getText(),password.getText());
-        	cnn.setRequestProperty("Auth",auth.toString());
-			cnn.setRequestMethod(POST,"POST");
-			request(cnn);*/
+        if(e.getActionCommand() == "upload") {
+        	test();
 
+        }else if (e.getActionCommand() == "logout"){
+            exit();
         }
     }
 
@@ -122,7 +89,6 @@ public class MainActivity extends Base {
 	public void receive(int requestID,int tag,HashMap<String,String> data){
 
 		if(data != null){
-			log.setText("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
 		}
         if(tag == 106){
@@ -132,40 +98,15 @@ public class MainActivity extends Base {
 
     // test
     private void test() {
-        //Auth auth = Auth.getInstance();
-        Connection cnn = new Connection();
-
-        // 1
-        cnn = new Connection();
-        cnn.setRequestMethod(Connection.LOGIN,"POST");
-        Auth.getInstance().setAccount("admin","wrongpassword");
-        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        request(cnn);
-
-        // 2
-        // get username and password and check. username:admin password:password
-        cnn = new Connection();
-        Auth.getInstance().setAccount("admin","password");
-        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        cnn.setRequestMethod(Connection.LOGIN,"POST");
-        // optional
-        cnn.setTag(106);
-        request(cnn);
-/*
-        // 3
         FileManager fm = new FileManager();
         fm.mk("wo/");
         fm.mk("wo/data.txt");
 
-        cnn = new Connection();
+        Connection cnn = new Connection();
         cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
         cnn.setRequestProperty("Connection","close");
-        //cnn.setRequestProperty("Length","123456789");
         cnn.setRequestProperty("Path","wo/data.txt");
         request(cnn);
-*/
-
-
     }
 }

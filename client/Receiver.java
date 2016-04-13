@@ -2,10 +2,12 @@ package cloud.client;
 import java.util.HashMap;
 
 public class Receiver implements Runnable{
+	
 	private ReceiverCallback callback;
 	private int requestID;
 	private int tag;
 	private HashMap<String,String> data;
+
 	Receiver(int requestID,int tag,HashMap<String,String> data,ReceiverCallback c){
 		this.requestID = requestID;
 		this.tag = tag;

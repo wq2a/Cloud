@@ -4,9 +4,11 @@ import java.io.*;
 import java.io.File;
 
 public class FileManager{
+	
 	private String root = "MyDocuments";
 	private final static String SP = "/";
 	private String p;
+
 	public FileManager(){
 
 	}
@@ -34,7 +36,7 @@ public class FileManager{
 		}
 		File fo = new File(aPath(path));
 		try{
-			if((path.substring(path.length()-1)).equals("/")){
+			if((path.substring(path.length()-1)).equals(SP)){
 				return fo.mkdirs();
 			}else{
 				return fo.createNewFile();

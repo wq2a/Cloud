@@ -25,72 +25,7 @@ public class Client {
         LoginActivity client = new LoginActivity();
         client.start();
     }
-}    	
-/*
-        // generate auth info
-        JFrame f = new JFrame();
-        final JLabel label = new JLabel("");
-        f.add(label);
-        f.setSize(500,500);
-        f.addComponentListener(new ComponentAdapter(){
-            public void componentResized(ComponentEvent event){
-                Component c = (Component)event.getSource();
-                Dimension dim = c.getSize();
-                label.setText(dim.width+","+dim.height);
-                // System.out.println(dim.width+","+dim.height);
-            }
-        });
-        f.setVisible(true);
-
-
-    	Auth auth = Auth.getInstance();
-
-        
-    	
-        System.out.println("***** first socket, without auth 401");
-        Connection cnn = new Connection(new Callback(){
-            @Override
-            public void start(Connection c){
-                c.setRequestMethod("GET");
-            }
-            @Override
-            public void response(HashMap<String,String> response){
-                try{
-                    Thread.sleep(5000);
-                    System.out.println("1");
-
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run()
-                        {
-                            // Update UI
-                            label.setText("cccccc");
-                        }
-                    });
-                }catch(InterruptedException e){
-
-                }                 
-            }
-        });
-        MyExecutor.getInstance().exec(cnn);
-
-        cnn = new Connection(new Callback(){
-            @Override
-            public void start(Connection c){
-                c.setRequestMethod("PUT");
-            }
-            @Override
-            public void response(HashMap<String,String> response){
-                try{
-                    Thread.sleep(1000);
-                    System.out.println("1");
-                }catch(InterruptedException e){
-
-                }                 
-            }
-        });
-        cnn.setRequestMethod("PUT1");
-        MyExecutor.getInstance().exec(cnn);
-*/
+}
 
 /*
 

@@ -6,7 +6,11 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 
-public class MainActivity extends Base {
+/**
+ *  Test
+ *
+ */
+public class TestActivity extends Base {
 
     // views
     private JPanel main;
@@ -21,7 +25,7 @@ public class MainActivity extends Base {
 		gl = new GridLayout(10, 0);
 		gl.setVgap(6);
 		
-		setTitle("Main");
+		setTitle("This activity is used for test");
         
 		main = new JPanel(gl);
         log = new JLabel("");

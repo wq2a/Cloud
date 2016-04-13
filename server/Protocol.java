@@ -70,6 +70,7 @@ public class Protocol {
         switch(requestMap.get(METHOD)){
             case GET:
                 responseMap.put("type",GET);
+                responseMap.put("data","<root><a/><b/></root>");
                 break;
             case PUT:
                 // file transferred to server, close socket when finish
@@ -114,17 +115,12 @@ public class Protocol {
         // return response();
     }
 
-    public void processFile(String datafile){
-       // System.out.println("~~~~~~~");
-       // System.out.println(requestMap.get("Path"));
-       // System.out.println(datafile);
-       // System.out.println("~~~~~~~");
-
+    public void processFile(String datafile) {
         FileManager fm = new FileManager();
         try{
             fm.mkfile(requestMap.get("Path"),datafile);
         }catch(Exception e){
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
     }
 

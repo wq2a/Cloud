@@ -7,16 +7,11 @@ import javax.swing.border.CompoundBorder;
 
 public class LoginActivity extends Base {
 
-    /* add more Request ID here 
-	   ...
-
-    */
-
     // views
     private JPanel main;
     private JLabel log;
     private JTextField username,password;
-    private JButton loginbtn,registerbtn;
+    private JButton loginbtn,registerbtn,test_loginbtn;
     private GridLayout gl;
 
     // init the view layout here
@@ -32,6 +27,7 @@ public class LoginActivity extends Base {
         username = new JTextField("",JTextField.CENTER);
         password = new JTextField("",JTextField.CENTER);
         loginbtn = new JButton("login");
+        test_loginbtn = new JButton("testlogin");
         registerbtn = new JButton("register");
 
         
@@ -39,6 +35,7 @@ public class LoginActivity extends Base {
       	username.setBorder(Config.BLACKBORDER);
       	password.setBorder(Config.BLACKBORDER);
         loginbtn.setBorder(Config.BLACKBORDER);
+        test_loginbtn.setBorder(Config.BLACKBORDER);
         registerbtn.setBorder(Config.BLACKBORDER);
         main.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -48,7 +45,7 @@ public class LoginActivity extends Base {
         main.add(password);
         main.add(loginbtn);
 		main.add(registerbtn);
-
+        main.add(test_loginbtn);
         /*main.addComponentListener(new ComponentAdapter(){
             public void componentResized(ComponentEvent event){
                 Component c = (Component)event.getSource();
@@ -70,14 +67,13 @@ public class LoginActivity extends Base {
     	addWindowListener(this);
     	registerbtn.addActionListener(this);
         loginbtn.addActionListener(this);
+        test_loginbtn.addActionListener(this);
     }
 
 	// initialize the layout
 	public void start(){
 		setLayout();
 		registerLisener();
-
-        //test();
 	}
 
 	/*
@@ -95,14 +91,23 @@ public class LoginActivity extends Base {
 			cnn.setRequestMethod(Connection.LOGIN,"POST");
             cnn.setTag(106);
 			request(cnn);
+        }else if(e.getActionCommand() == "testlogin"){
+            Auth auth = Auth.getInstance();
+            Connection cnn = new Connection();
+            // get username and password and check. 
+            // username:admin password:password
+            auth.setAccount("admin","password");
+            cnn.setRequestProperty("Auth",auth.toString());
+            cnn.setRequestMethod(Connection.LOGIN,"POST");
+            cnn.setTag(106);
+            request(cnn);
         }
     }
 
 	// receive data, still process in background thread, heavy work here
 	public HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data){
-		if(requestID == Connection.GET_PATH){
-			return null;
-		}
+		/* heavy work here*/
+        // required to return data at the end
 		return data;
 	}
 
@@ -114,7 +119,7 @@ public class LoginActivity extends Base {
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
 
             if(tag == 106 && data.get("Status").equals(Connection.OK)){
-                moveTo(MainActivity.class);
+                moveTo(TestActivity.class);
             }
 		}
         

@@ -125,6 +125,14 @@ public class Connection implements Runnable{
             setRequestProperty("Length",""+fileLength);
             setRequestProperty("Connection","close");
             requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
+        } else if (field.equals("Path") && value.length()>0 
+                && (value.substring(value.length()-1)).equals("/")){
+            if(fileLength == 0){
+                fm = null;
+            }
+            setRequestProperty("Length",""+fileLength);
+            setRequestProperty("Connection","close");
+            requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
         } else {
             requestPropertys.append(field+":"+SP+value+CRLF);
         }

@@ -1,5 +1,6 @@
 package cloud.server;
 
+import java.util.*;
 import java.sql.*;
 import java.io.*;
 import cloud.server.User;
@@ -77,7 +78,9 @@ public class DBManager{
 			      "')";
 			if(stmt.executeUpdate(sql)==0)
 				return false;
-			
+
+			insertPath("data/"+user.getUsername()+"/");
+
 			FileManager fm = new FileManager(user);
 			fm.mkdir("");
 
@@ -120,13 +123,13 @@ public class DBManager{
 		}catch(SQLException se){
       		se.printStackTrace();
    		}catch(Exception e){
-      		//Handle errors for Class.forName
       		e.printStackTrace();
    		}
 		create();
 	}
 
-	public void getPath(String path){
+	public String getPath(String path){
+		String result = "";
 		try{
 			int parent = -1;
 
@@ -142,20 +145,56 @@ public class DBManager{
 				"ON p.id=c.descendant "+
 				"WHERE c.ancestor="+parent;
 			rs = stmt.executeQuery(sql);
+
+			PathManager pm = new PathManager();
 			while(rs.next()){
 				// format tree
-				System.out.println(rs.getInt("id")+","+rs.getString("name")+","+
-					rs.getString("path")+","+rs.getInt("ancestor")+","+rs.getInt("descendant"));
+				//System.out.println(rs.getInt("id")+","+rs.getString("name")+","+
+					//rs.getString("path")+","+rs.getInt("ancestor")+","+rs.getInt("descendant")+","+rs.getInt("depth"));
+				pm.add(new Path(rs.getInt("id"),rs.getString("name"),rs.getInt("parent"),rs.getInt("depth"),rs.getInt("type")));
 			}
-			
-
+			result = pm.generateXML();
 		}catch(SQLException se){
       		se.printStackTrace();
    		}catch(Exception e){
-      		//Handle errors for Class.forName
       		e.printStackTrace();
    		}finally{
-      		
+      		return result;
+   		}
+	}
+
+	public boolean delPath(String path){
+		try{
+			int id = -1;
+			int parent = -1;
+
+			stmt = getConnection().createStatement();			
+			String sql = "SELECT * FROM path WHERE path='"+path+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				parent = rs.getInt("parent");
+				id = rs.getInt("id");
+
+				sql = "DELETE from path" +
+					" WHERE path like '"+ path +"%'";
+
+				stmt.executeUpdate(sql);
+				
+				sql = "DELETE link from path_closure p, path_closure link, path_closure c" +
+					" WHERE p.ancestor = link.ancestor and c.descendant = link.descendant" +
+					" and (c.descendant=" + id +
+					" or c.ancestor=" + id +
+					")";
+				if(stmt.executeUpdate(sql) == 0){
+					return true;
+				}
+			}
+		}catch(SQLException se){
+      		se.printStackTrace();
+   		}catch(Exception e){
+      		e.printStackTrace();
+   		}finally{
+      		return true;
    		}
 	}
 
@@ -163,31 +202,50 @@ public class DBManager{
 		int id = -1;
 		int parent = -1;
 		String name = "";
+		int type = 0;
 		String sql;
+		ResultSet rs;
 		try{
+			stmt = getConnection().createStatement();
+			sql = "SELECT * FROM path WHERE path='"+path+"'";
+			rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				// aready exist;
+				// System.out.println("Aready exit!"+rs.getInt("id"));
+				
+				return rs.getInt("id");
+			}
+
 			if(path.equals("data/")){
 				parent = 0;
 				name = "data";
 			}else{
+				if(!path.endsWith("/")){
+					type = 1;
+				}
 				String r[] = path.split("\\/");
 				int length = r.length;
 				if(length != 0){
 					name = r[length-1];
 					int index = path.lastIndexOf(name);
-    				stmt = getConnection().createStatement();
 					sql = "SELECT * FROM path WHERE path='"+path.substring(0,index)+"'";
-					ResultSet rs = stmt.executeQuery(sql);
+					rs = stmt.executeQuery(sql);
 					if(rs.next()){
 						parent = rs.getInt("id");
+					}else{
+						// there's no parent dir
+						System.out.println("No parent dir!");
+						return id;
 					}
 				}
 			}
 			sql = "INSERT INTO path" +
-			  	  "(name,parent,path)" +
+			  	  "(name,parent,path,type)" +
 			  	  "VALUES('"+name +
 			  	  "'," + parent +
 			      ",'" + path +
-			      "')";
+			      "'," + type +
+			      ")";
 
 			PreparedStatement stmt = getConnection().prepareStatement(
                            sql, Statement.RETURN_GENERATED_KEYS);
@@ -226,8 +284,9 @@ public class DBManager{
    		}catch(Exception e){
       		e.printStackTrace();
    		}finally{
-     		return id;
+     		
    		}
+   		return id;
 	}
 
 	public void create(){
@@ -257,6 +316,7 @@ public class DBManager{
                   " name VARCHAR(255) NOT NULL, " +
                   " parent INTEGER NOT NULL, " +
                   " path VARCHAR(255) NOT NULL, " +
+                  " type INTEGER NOT NULL DEFAULT 0, " +
                   " PRIMARY KEY ( id ))";
 			stmt.executeUpdate(sql);
 			sql = "CREATE TABLE IF NOT EXISTS path_closure" +
@@ -265,19 +325,21 @@ public class DBManager{
                   " depth INTEGER NOT NULL DEFAULT 0, " +
                   " PRIMARY KEY ( ancestor,descendant ))";
 			stmt.executeUpdate(sql);
-
+			
 			insertPath("data/");
-			insertPath("data/wq2a/");
-			insertPath("data/wq2a/aaa/");
-			insertPath("data/wq2a/aaa/ccc/");
-			insertPath("data/wq2a/aaa/ccc/ddd.txt");
-			insertPath("data/wq2a/aaa/ccc.txt");
-			insertPath("data/wq2a/aaa/bbb.txt");
-			insertPath("data/pp/");
-			insertPath("data/pp/aa/");
-
-			getPath("data/wq2a/");
-
+			/*insertPath("data/admin/");
+			insertPath("data/admin/aaa/");
+			insertPath("data/admin/aaa/ccc/");
+			insertPath("data/admin/aaa/ccc/ddd.txt");
+			insertPath("data/admin/aaa/ccc.txt");
+			insertPath("data/admin/aaa/bbb.txt");
+			insertPath("data/admin/bbb/");
+			insertPath("data/admin/pp/");
+			insertPath("data/admin/pp/aa/");*/
+			//System.out.println(getPath("data/wq2a/"));
+			//delPath("data/wq2a/");
+			//System.out.println(getPath("data/"));
+			
 			FileManager fm = new FileManager();
 			fm.mkdirROOT();
 

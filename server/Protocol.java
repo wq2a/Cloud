@@ -83,18 +83,28 @@ public class Protocol {
         switch(requestMap.get(METHOD)){
             case GET:
                 responseMap.put("type",GET);
-                responseMap.put("data","<root><a/><b/></root>");
+                if(requestMap.get("Parent") != null){
+                    responseMap.put("data", 
+                        DBManager.getInstance().getPath("data/"+auth.getUser().getUsername()+"/"+requestMap.get("Parent")));
+                }
+                
                 break;
             case PUT:
                 this.bytes = bytes;
                 if(null!=requestMap.get("Path")){
-                    writeToFile = true;
+                    
+                    if(DBManager.getInstance().insertPath("data/"+requestMap.get("Path")) == -1){
+                        // error
+                        responseMap.put(STATUS,NOTFOUND);
+                    }else{
+                        writeToFile = true;
+                    }
                 }
                 // file transferred to server, close socket when finish
                 // ...
                 
-                responseMap.put("type",PUT);
-                responseMap.put("test","test");
+                //responseMap.put("type",PUT);
+                //responseMap.put("test","test");
                 break;
             case DELETE:
                 break;
@@ -138,7 +148,12 @@ public class Protocol {
         if(writeToFile){
             try{
                 FileManager fm = new FileManager();
-                fm.mkfile(requestMap.get("Path"),new String(bytes,"UTF-8"));
+                if(requestMap.get("Path").endsWith("/")){
+                    fm.mkdir(requestMap.get("Path"));
+                }else{
+                    fm.mkfile(requestMap.get("Path"),new String(bytes,"UTF-8"));
+                }
+                
             } catch(IOException e){
                 System.err.println(e.getMessage());
             } catch(Exception e){

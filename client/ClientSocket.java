@@ -50,7 +50,8 @@ public class ClientSocket{
             out.println(request);
 
             if(fm != null){
-                File fo = new File(fm.aPath(fm.getP()));
+                File fo = new File(fm.getP());
+                //File fo = new File(fm.aPath(fm.getP()));
                 byte[] mybytearray = new byte[(int) fo.length()];
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
                 bis.read(mybytearray, 0, mybytearray.length);

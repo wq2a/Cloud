@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.lang.*;
 import java.io.IOException;
 import cloud.server.DBManager;
+import cloud.server.MyExecutor;
 
 public class ServerManager{
 	private int portNumber;
@@ -27,6 +28,7 @@ public class ServerManager{
             while(true){
             	System.out.println("current workers:"+ClientWorker.getWorkers().size());
                 ClientWorker c = new ClientWorker(serverSocket.accept(),this.workerID);
+                //MyExecutor.getInstance().exec(c);
                 Thread t = new Thread(c);
                 t.start();
                 this.workerID++;

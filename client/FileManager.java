@@ -21,8 +21,9 @@ public class FileManager{
 		return this.p;
 	}
 
-	public String getLength(String relativePath){
-		File fo = new File(aPath(relativePath));
+	public String getLength(String abPath){
+		//File fo = new File(aPath(relativePath));
+		File fo = new File(abPath);
 		return ""+fo.length();
 	}
 

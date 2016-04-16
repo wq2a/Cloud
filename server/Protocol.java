@@ -7,6 +7,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import cloud.server.Auth;
 
 public class Protocol {
@@ -28,10 +35,15 @@ public class Protocol {
     final static String CONNECTION = "Connection";
     final static String CLOSE = "close";
 
+    //private Socket socket;
+    private int length;
     private HashMap<String,String> requestMap;
     private HashMap<String,String> responseMap;
     private StringBuffer response;
     private boolean isClosed;
+
+    byte[] bytes;
+    private boolean writeToFile = false;
 
     private Auth auth;
 
@@ -41,6 +53,7 @@ public class Protocol {
         response = new StringBuffer();
         isClosed = false;
         auth = new Auth();
+        bytes = new byte[0];
     }
 
     private String generator(){
@@ -54,7 +67,7 @@ public class Protocol {
         return response.toString();
     }
 
-    public String response(){
+    public String response(byte[] bytes){
         if(requestMap.isEmpty()||requestMap.get(METHOD)==null){
             responseMap.put(STATUS,BADREQUEST);
             return generator();
@@ -73,9 +86,15 @@ public class Protocol {
                 responseMap.put("data","<root><a/><b/></root>");
                 break;
             case PUT:
+                this.bytes = bytes;
+                if(null!=requestMap.get("Path")){
+                    writeToFile = true;
+                }
                 // file transferred to server, close socket when finish
                 // ...
                 
+                responseMap.put("type",PUT);
+                responseMap.put("test","test");
                 break;
             case DELETE:
                 break;
@@ -94,7 +113,7 @@ public class Protocol {
     }
 
     public int process(String request){
-        int length=0;
+        length = 0;
         requestMap.clear();
         responseMap.clear();
         if(!request.isEmpty()){
@@ -115,12 +134,16 @@ public class Protocol {
         // return response();
     }
 
-    public void processFile(String datafile) {
-        FileManager fm = new FileManager();
-        try{
-            fm.mkfile(requestMap.get("Path"),datafile);
-        }catch(Exception e){
-            System.err.println(e.getMessage());
+    public void backGround(){
+        if(writeToFile){
+            try{
+                FileManager fm = new FileManager();
+                fm.mkfile(requestMap.get("Path"),new String(bytes,"UTF-8"));
+            } catch(IOException e){
+                System.err.println(e.getMessage());
+            } catch(Exception e){
+                System.err.println(e.getMessage());
+            }
         }
     }
 

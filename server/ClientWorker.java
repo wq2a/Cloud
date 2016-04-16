@@ -38,35 +38,28 @@ public class ClientWorker implements Runnable{
     private void process(){
         protocol = new Protocol();
         StringBuffer requestStr = new StringBuffer();
-        
         StringBuffer responseStr = new StringBuffer();
         String temp;
-        int length;
         try(BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(),true);){
             while((temp=in.readLine()) != null){
-                if(temp.isEmpty()){
-                    length = protocol.process(requestStr.toString());
 
+                if(temp.isEmpty()){
+                    int length = protocol.process(requestStr.toString());
+                    byte[] bytes = new byte[0];
                     if(length > 0){
-                        /*
-                        datafile.setLength(0);
-                        for(int i=0;i<length;i++){
-                            datafile.append(in.read());
-                        }*/
+                    
                         InputStream in2 = socket.getInputStream();
-                        byte[] bytes = new byte[length];
+                        bytes = new byte[length];
                         int count = 0;
                         while((count+=in2.read(bytes)) < length){
 
                         }
-                        //String datafile = new String(bytes,"UTF-8");
-
-                        protocol.processFile(new String(bytes,"UTF-8"));
+                        //in2.closed();
                     }
 
-                    out.println(protocol.response());
+                    out.println(protocol.response(bytes));
                     
                     if(protocol.isClosed())
                         break;
@@ -81,5 +74,6 @@ public class ClientWorker implements Runnable{
         }catch(IOException e){
             e.printStackTrace();
         }
+        protocol.backGround();
     }
 }

@@ -126,6 +126,110 @@ public class DBManager{
 		create();
 	}
 
+	public void getPath(String path){
+		try{
+			int parent = -1;
+
+			stmt = getConnection().createStatement();			
+			String sql = "SELECT * FROM path WHERE path='"+path+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				parent = rs.getInt("id");
+			}
+
+			sql = "SELECT * FROM path p "+
+				"JOIN path_closure c "+
+				"ON p.id=c.descendant "+
+				"WHERE c.ancestor="+parent;
+			rs = stmt.executeQuery(sql);
+			while(rs.next()){
+				// format tree
+				System.out.println(rs.getInt("id")+","+rs.getString("name")+","+
+					rs.getString("path")+","+rs.getInt("ancestor")+","+rs.getInt("descendant"));
+			}
+			
+
+		}catch(SQLException se){
+      		se.printStackTrace();
+   		}catch(Exception e){
+      		//Handle errors for Class.forName
+      		e.printStackTrace();
+   		}finally{
+      		
+   		}
+	}
+
+	public int insertPath(String path){
+		int id = -1;
+		int parent = -1;
+		String name = "";
+		String sql;
+		try{
+			if(path.equals("data/")){
+				parent = 0;
+				name = "data";
+			}else{
+				String r[] = path.split("\\/");
+				int length = r.length;
+				if(length != 0){
+					name = r[length-1];
+					int index = path.lastIndexOf(name);
+    				stmt = getConnection().createStatement();
+					sql = "SELECT * FROM path WHERE path='"+path.substring(0,index)+"'";
+					ResultSet rs = stmt.executeQuery(sql);
+					if(rs.next()){
+						parent = rs.getInt("id");
+					}
+				}
+			}
+			sql = "INSERT INTO path" +
+			  	  "(name,parent,path)" +
+			  	  "VALUES('"+name +
+			  	  "'," + parent +
+			      ",'" + path +
+			      "')";
+
+			PreparedStatement stmt = getConnection().prepareStatement(
+                           sql, Statement.RETURN_GENERATED_KEYS);
+
+			if(stmt.executeUpdate()==0)
+				return id;
+
+			ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                id = generatedKeys.getInt(1);
+            }
+
+            Statement statement = getConnection().createStatement();
+            
+            sql = "INSERT INTO path_closure" +
+			  	  "(ancestor,descendant,depth)" +
+			  	  "VALUES('"+parent +
+			  	  "'," + id +
+			      ",'" + 1 +
+			      "')";
+			if(statement.executeUpdate(sql)==0)
+				return id;
+            
+            sql = "INSERT INTO path_closure" +
+			  	  "(ancestor,descendant,depth)" +
+			  	  "SELECT p.ancestor, c.descendant,p.depth+c.depth" +
+			  	  " from path_closure p, path_closure c" +
+			  	  " where p.descendant=" + parent +
+			  	  " and c.descendant=" + id;
+            
+			if(statement.executeUpdate(sql)==0)
+				return id;
+
+		}catch(SQLException se){
+      		se.printStackTrace();
+   		}catch(Exception e){
+      		e.printStackTrace();
+   		}finally{
+     		return id;
+   		}
+	}
+
 	public void create(){
 		try{
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/?useSSL=false",USER,PASSWORD);
@@ -135,6 +239,7 @@ public class DBManager{
 			conn.close();
 			conn = null;
 			stmt = getConnection().createStatement();
+			// User table
 			sql = "CREATE TABLE IF NOT EXISTS user" +
                   "(id INTEGER not NULL AUTO_INCREMENT, " +
                   " username VARCHAR(255), " +
@@ -145,6 +250,33 @@ public class DBManager{
                   " email VARCHAR(255), " +
                   " PRIMARY KEY ( id ))";
 			stmt.executeUpdate(sql);
+
+			// Path Closure Tables
+			sql = "CREATE TABLE IF NOT EXISTS path" +
+                  "(id INTEGER not NULL AUTO_INCREMENT, " +
+                  " name VARCHAR(255) NOT NULL, " +
+                  " parent INTEGER NOT NULL, " +
+                  " path VARCHAR(255) NOT NULL, " +
+                  " PRIMARY KEY ( id ))";
+			stmt.executeUpdate(sql);
+			sql = "CREATE TABLE IF NOT EXISTS path_closure" +
+                  "(ancestor INTEGER NOT NULL, " +
+                  " descendant INTEGER NOT NULL, " +
+                  " depth INTEGER NOT NULL DEFAULT 0, " +
+                  " PRIMARY KEY ( ancestor,descendant ))";
+			stmt.executeUpdate(sql);
+
+			insertPath("data/");
+			insertPath("data/wq2a/");
+			insertPath("data/wq2a/aaa/");
+			insertPath("data/wq2a/aaa/ccc/");
+			insertPath("data/wq2a/aaa/ccc/ddd.txt");
+			insertPath("data/wq2a/aaa/ccc.txt");
+			insertPath("data/wq2a/aaa/bbb.txt");
+			insertPath("data/pp/");
+			insertPath("data/pp/aa/");
+
+			getPath("data/wq2a/");
 
 			FileManager fm = new FileManager();
 			fm.mkdirROOT();

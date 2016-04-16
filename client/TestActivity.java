@@ -15,7 +15,7 @@ public class TestActivity extends Base {
     // views
     private JPanel main;
     private JLabel log;
-    private JButton upload,logout,getpath;
+    private JButton upload,upload_new,logout,getpath;
 
     private GridLayout gl;
 
@@ -30,11 +30,13 @@ public class TestActivity extends Base {
 		main = new JPanel(gl);
         log = new JLabel("");
         upload = new JButton("upload");
+        upload_new = new JButton("upload_new");
         logout = new JButton("logout");
         getpath = new JButton("getpath");
 
         log.setBorder(Config.REDBORDER);
         upload.setBorder(Config.BLACKBORDER);
+        upload_new.setBorder(Config.BLACKBORDER);
         logout.setBorder(Config.BLACKBORDER);
         getpath.setBorder(Config.BLACKBORDER);
         main.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -42,12 +44,13 @@ public class TestActivity extends Base {
         main.add(Box.createRigidArea(new Dimension(1,0)));
         main.add(log);        
         main.add(upload);
+        main.add(upload_new);
         main.add(logout);
         main.add(getpath);
         
         setContentPane(main);
         pack();
-        setSize((int)(Config.SCREENDIM.width*0.7),(int)(Config.SCREENDIM.height*0.7));
+        setSize((int)(Config.SCREENDIM.width*0.3),(int)(Config.SCREENDIM.height*0.6));
         setLocation(Config.SCREENDIM.width/2-getSize().width/2, Config.SCREENDIM.height/2-getSize().height/2);
         setVisible(true);
     }
@@ -56,6 +59,7 @@ public class TestActivity extends Base {
     private void registerLisener() {
     	addWindowListener(this);
     	upload.addActionListener(this);
+        upload_new.addActionListener(this);
         logout.addActionListener(this);
         getpath.addActionListener(this);
     }
@@ -73,13 +77,15 @@ public class TestActivity extends Base {
         log.setText(e.getActionCommand());
         if(e.getActionCommand() == "upload") {
         	test();
+        } else if(e.getActionCommand() == "upload_new") {
+            test_new_file();
         } else if (e.getActionCommand() == "logout"){
             exit();
         } else if (e.getActionCommand() == "getpath"){
             // get path example
             Connection cnn = new Connection();
             cnn.setRequestMethod(Connection.GET_PATH,"GET");
-            cnn.setRequestProperty("tt","root");
+            cnn.setRequestProperty("Parent","");
             request(cnn);
         }
     }
@@ -92,7 +98,6 @@ public class TestActivity extends Base {
 
 	// receive data which need to display, in UI thread
 	public void receive(int requestID,int tag,HashMap<String,String> data){
-
 		if(data != null){
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
             System.out.println("Data:"+data.get("data"));
@@ -104,15 +109,29 @@ public class TestActivity extends Base {
 
     // test
     private void test() {
+
         FileManager fm = new FileManager();
+        Connection cnn = new Connection();
+        /* upload local file to server*/
         fm.mk("wo/");
         fm.mk("wo/data.txt");
+        cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+        //cnn.setRequestProperty("Connection","close");
+        // set the local file path and it will upload to server then.
+        cnn.setRequestProperty("LocPath",fm.aPath("wo/data.txt"));
+        cnn.setRequestProperty("Path","wo/data2.txt");
+        request(cnn);
+       
+    }
 
+    /* create a new file on server*/
+    private void test_new_file() {
         Connection cnn = new Connection();
         cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        cnn.setRequestProperty("Connection","close");
-        cnn.setRequestProperty("Path","wo/data.txt");
+        cnn.setRequestProperty("Path","wo/data_new.txt");
         request(cnn);
+       
     }
 }

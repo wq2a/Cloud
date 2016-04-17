@@ -15,6 +15,7 @@ In the client side, we use the username as a salt combined with password and usi
 ## Built With
 * Makefile
 ```
+make serverClean - will create the required database and tables every time and start the server.
 make server - will create the required database and tables at first time and start the server.
 make client - start the client
 make clean - remove all class files

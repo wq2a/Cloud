@@ -97,6 +97,9 @@ public class Connection implements Runnable{
             setRequestProperty("Auth",Auth.getInstance().toString());
             setRequestProperty("Connection","close");
         }*/
+        if(requestID == REGISTER){
+            setRequestProperty("Register","");
+        }
         setRequestProperty(AGENT,Info.getInstance().getOS());
         setRequestProperty(LANGUAGE,Info.getInstance().getLanguage());
     }

@@ -73,7 +73,7 @@ public class Protocol {
             return generator();
         }
 
-        if(!auth.isAuthorized(requestMap)){
+        if(!auth.isAuthorized(requestMap) && !(requestMap.get("Register")!=null&&(requestMap.get(METHOD)).equals(POST))){
             responseMap.put(STATUS,UNAUTHORIZED);
             return generator();
         }
@@ -87,7 +87,8 @@ public class Protocol {
                     responseMap.put("data", 
                         DBManager.getInstance().getPath("data/"+auth.getUser().getUsername()+"/"+requestMap.get("Parent")));
                 }
-                
+                // get file from server
+                // ...
                 break;
             case PUT:
                 this.bytes = bytes;
@@ -100,16 +101,16 @@ public class Protocol {
                         writeToFile = true;
                     }
                 }
-                // file transferred to server, close socket when finish
-                // ...
-                
-                //responseMap.put("type",PUT);
-                //responseMap.put("test","test");
                 break;
             case DELETE:
+                // delete file on server
+                // ...
                 break;
             case POST:
                 responseMap.put("type",POST);
+                if(requestMap.get("Register")!=null){
+                    auth.register(requestMap);
+                }
                 
                 break;
             default:

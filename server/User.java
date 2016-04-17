@@ -32,6 +32,15 @@ public class User{
 	public void setSalt(String salt){
 		this.salt = salt;
 	}
+	public void setEmail(String email){
+		this.email = email;
+	}
+	public void setFirstname(String firstname){
+		this.firstname = firstname;
+	}
+	public void setLastname(String lastname){
+		this.lastname = lastname;
+	}
 	public String getUsername(){
 		return username;
 	}

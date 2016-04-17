@@ -101,6 +101,23 @@ public class LoginActivity extends Base {
             cnn.setRequestMethod(Connection.LOGIN,"POST");
             cnn.setTag(106);
             request(cnn);
+        }else if(e.getActionCommand() == "register"){
+            Auth auth = Auth.getInstance();
+            Connection cnn = new Connection();
+            
+            String username = "example";
+            String password = "pas";
+            auth.setAccount(username,password);
+
+            // these three are optional
+            cnn.setRequestProperty("Email","wq2a@mtmail.mtsu.edu");
+            cnn.setRequestProperty("First","FFF");
+            cnn.setRequestProperty("Last","LLL");
+
+            cnn.setRequestProperty("Auth",auth.toString());
+            cnn.setRequestMethod(Connection.REGISTER,"POST");
+
+            request(cnn);
         }
     }
 
@@ -119,6 +136,10 @@ public class LoginActivity extends Base {
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
 
             if(tag == 106 && data.get("Status").equals(Connection.OK)){
+                moveTo(TestActivity.class);
+            }
+
+            if(requestID == Connection.REGISTER && data.get("Status").equals(Connection.OK)){
                 moveTo(TestActivity.class);
             }
 		}

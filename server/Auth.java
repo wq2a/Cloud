@@ -87,6 +87,31 @@ public class Auth {
         return isAuthorized;
     }
 
+    public boolean register(HashMap<String,String> requestMap){
+        
+        if(requestMap.get("Auth") == null)
+            return false;
+        String[] property = requestMap.get("Auth").split(SP);
+        if(property.length>1){
+            user.setUsername(property[0]);
+            user.setH1(property[1]);
+        }
+        if(requestMap.get("Email")!=null){
+            user.setEmail(requestMap.get("Email"));
+        }
+        if(requestMap.get("First")!=null){
+            user.setFirstname(requestMap.get("First"));
+        }
+        if(requestMap.get("Last")!=null){
+            user.setLastname(requestMap.get("Last"));
+        }
+        insertUser(user);
+        //isAuthorized = true;
+        searchUser();
+        isAuthorized = checkValidate();
+        return isAuthorized;
+    }
+
     public String toString(){
         return user.getUsername()+"\n"+user.getH1()+"\n"+user.getSalt()+"\n"+user.getH2();
     }

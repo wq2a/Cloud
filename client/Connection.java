@@ -33,6 +33,7 @@ public class Connection implements Runnable{
     public final static int REGISTER = 1;
     public final static int UPLOAD_FILE = 2;
     public final static int GET_PATH = 3;
+    public final static int DELETE_PATH = 4;
 
     private int requestID;
     private int tag;
@@ -153,15 +154,13 @@ public class Connection implements Runnable{
         String temp;
         ClientSocket client;
 
-        if(method.equals(PUT+CRLF)){
+        if(method.equals(PUT+CRLF) || method.equals(DELETE+CRLF) ){
             client = new ClientSocket();
         }else{
             client = ClientSocket.getInstance();
         }
 
-        //System.out.println(toString());
         temp = client.getResponse(toString(),fm);
-        //System.out.println(temp);
         if(!temp.isEmpty()){
             String r[] = temp.split("\\r?\\n");
             for(int i=0;i<r.length;i++){

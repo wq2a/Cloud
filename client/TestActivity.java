@@ -7,7 +7,7 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 
 /**
- *  Test
+ *  Test 
  *
  */
 public class TestActivity extends Base {
@@ -15,7 +15,7 @@ public class TestActivity extends Base {
     // views
     private JPanel main;
     private JLabel log;
-    private JButton upload,upload_content,new_file,new_dir,logout,getpath;
+    private JButton upload,upload_content,new_file,new_dir,logout,getpath,delpath;
 
     private GridLayout gl;
 
@@ -35,6 +35,7 @@ public class TestActivity extends Base {
         new_dir = new JButton("new_dir");
         logout = new JButton("logout");
         getpath = new JButton("getpath");
+        delpath = new JButton("delpath");
 
         log.setBorder(Config.REDBORDER);
         upload.setBorder(Config.BLACKBORDER);
@@ -43,6 +44,7 @@ public class TestActivity extends Base {
         new_dir.setBorder(Config.BLACKBORDER);
         logout.setBorder(Config.BLACKBORDER);
         getpath.setBorder(Config.BLACKBORDER);
+        delpath.setBorder(Config.BLACKBORDER);
         main.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         main.add(Box.createRigidArea(new Dimension(1,0)));
@@ -53,6 +55,7 @@ public class TestActivity extends Base {
         main.add(new_dir);
         main.add(logout);
         main.add(getpath);
+        main.add(delpath);
         
         setContentPane(main);
         pack();
@@ -70,6 +73,7 @@ public class TestActivity extends Base {
         new_dir.addActionListener(this);
         logout.addActionListener(this);
         getpath.addActionListener(this);
+        delpath.addActionListener(this);
     }
 
 	// initialize the layout
@@ -99,12 +103,13 @@ public class TestActivity extends Base {
             cnn.setRequestMethod(Connection.GET_PATH,"GET");
             cnn.setRequestProperty("Parent","");
             request(cnn);
+        } else if (e.getActionCommand() == "delpath"){
+            test_del();
         }
     }
 
 	// receive data, still process in background thread, heavy work here
 	public HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data){
-		
 		return data;
 	}
 
@@ -112,7 +117,11 @@ public class TestActivity extends Base {
 	public void receive(int requestID,int tag,HashMap<String,String> data){
 		if(data != null){
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
-            System.out.println("Data:"+data.get("data"));
+            //System.out.println("Data:"+data.get("data"));
+
+            if(requestID == Connection.GET_PATH){
+                System.out.println("Data:"+data.get("data"));
+            }
 		}
         if(tag == 106){
             //moveTo(LoginActivity.class);
@@ -137,19 +146,13 @@ public class TestActivity extends Base {
        
     }
 
-    // test upload a file to server
+    // send just content to server
     private void test_content() {
 
-        FileManager fm = new FileManager();
         Connection cnn = new Connection();
-        /* upload local file to server*/
-        fm.mk("wo/");
-        fm.mk("wo/data.txt");
         cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        //cnn.setRequestProperty("Connection","close");
-        // set the local file path and it will upload to server then.
-        //cnn.setRequestProperty("LocPath",fm.aPath("wo/data.txt"));
+        
         cnn.setRequestProperty("Content","this is a content..  ..  ");
         cnn.setRequestProperty("Path","data2.txt");
         request(cnn);
@@ -175,4 +178,13 @@ public class TestActivity extends Base {
         request(cnn);
     }
 
+    /* delete on server*/
+    private void test_del() {
+        Connection cnn = new Connection();
+        cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
+        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+        cnn.setRequestProperty("Path","aaa/");
+        //cnn.setRequestProperty("Path","data_new.txt");
+        request(cnn);
+    }
 }

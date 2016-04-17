@@ -57,12 +57,6 @@ public class ClientSocket{
             out.println(request);
 
             if(fm != null){
-                /*
-                File fo = new File(fm.getP());
-                byte[] mybytearray = new byte[(int) fo.length()];
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
-                bis.read(mybytearray, 0, mybytearray.length);*/
-
                 byte[] mybytearray = fm.getContent();
                 OutputStream os = socket.getOutputStream();
                 // wait util server ready

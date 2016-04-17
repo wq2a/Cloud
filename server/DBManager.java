@@ -167,7 +167,7 @@ public class DBManager{
 		try{
 			int id = -1;
 			int parent = -1;
-
+			System.out.println("="+path);
 			stmt = getConnection().createStatement();			
 			String sql = "SELECT * FROM path WHERE path='"+path+"'";
 			ResultSet rs = stmt.executeQuery(sql);

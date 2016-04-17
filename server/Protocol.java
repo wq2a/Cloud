@@ -105,9 +105,17 @@ public class Protocol {
             case DELETE:
                 // delete file on server
                 // ...
+                if(null!=requestMap.get("Path") && !(requestMap.get("Path")).isEmpty()){
+                    DBManager.getInstance().delPath("data/"+requestMap.get("Path"));
+                    FileManager fm = new FileManager(auth);
+                    fm.del(requestMap.get("Path"));
+                }else{
+                    // path is empty
+                    responseMap.put(STATUS,NOTFOUND);
+                }
                 break;
             case POST:
-                responseMap.put("type",POST);
+                // responseMap.put("type",POST);
                 if(requestMap.get("Register")!=null){
                     auth.register(requestMap);
                 }

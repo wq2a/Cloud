@@ -62,9 +62,7 @@ public class FileManager{
 	public byte[] getContent() throws Exception{
 		
 		if(content != null){
-			//byte[] mybytearray = new byte[this.length];;
 			byte[] mybytearray = this.content.getBytes(Charset.forName("UTF-8"));
-			System.out.println(this.length+"==="+mybytearray.length);
 
 			return mybytearray;
 		}else{

@@ -48,7 +48,6 @@ public class ClientWorker implements Runnable{
 
                 if(temp.isEmpty()){
                     int length = protocol.process(requestStr.toString());
-                    System.out.println("++"+length);
                     byte[] bytes = new byte[0];
                     if(length > 0){
                         bytes = new byte[length];

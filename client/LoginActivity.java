@@ -145,29 +145,4 @@ public class LoginActivity extends Base {
 		}
         
 	}
-
-    // test
-    private void test(){
-        /*
-        //Auth auth = Auth.getInstance();
-        Connection cnn = new Connection();
-
-        // 1
-        cnn = new Connection();
-        cnn.setRequestMethod(Connection.LOGIN,"POST");
-        Auth.getInstance().setAccount("admin","wrongpassword");
-        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        request(cnn);
-
-        // 2
-        // get username and password and check. username:admin password:password
-        cnn = new Connection();
-        Auth.getInstance().setAccount("admin","password");
-        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        cnn.setRequestMethod(Connection.LOGIN,"POST");
-        // optional
-        cnn.setTag(106);
-        request(cnn);
-        */
-    }
 }

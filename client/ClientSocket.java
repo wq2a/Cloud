@@ -14,11 +14,18 @@ public class ClientSocket{
     private String hostName;
     private int portNumber;
 
+    private String code;
+
     ClientSocket(){
         hostName = "localhost";
         portNumber = 9900;
         response = new StringBuffer();
+        code = Utils.Random();
         connect();
+    }
+
+    public String getCode(){
+        return code;
     }
 
     private void connect(){
@@ -50,19 +57,28 @@ public class ClientSocket{
             out.println(request);
 
             if(fm != null){
+                /*
                 File fo = new File(fm.getP());
-                //File fo = new File(fm.aPath(fm.getP()));
                 byte[] mybytearray = new byte[(int) fo.length()];
                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
-                bis.read(mybytearray, 0, mybytearray.length);
+                bis.read(mybytearray, 0, mybytearray.length);*/
+
+                byte[] mybytearray = fm.getContent();
                 OutputStream os = socket.getOutputStream();
-                os.write(mybytearray, 0, mybytearray.length);
+                // wait util server ready
+                if(in.readLine() != null){
+                    os.write(mybytearray, 0, mybytearray.length);
+                }
             }
 
             while((fromServer = in.readLine()) != null){
                 if(fromServer.isEmpty())
                     break;
                 response.append(fromServer+CRLF);
+            }
+
+            if(!code.equals(instance.getCode())){
+                disconnect();
             }
         }catch(Exception e){
             System.err.println("Cannot establish connection. Server may not be up."+e.getMessage());

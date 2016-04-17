@@ -15,7 +15,7 @@ public class TestActivity extends Base {
     // views
     private JPanel main;
     private JLabel log;
-    private JButton upload,new_file,new_dir,logout,getpath;
+    private JButton upload,upload_content,new_file,new_dir,logout,getpath;
 
     private GridLayout gl;
 
@@ -30,6 +30,7 @@ public class TestActivity extends Base {
 		main = new JPanel(gl);
         log = new JLabel("");
         upload = new JButton("upload");
+        upload_content = new JButton("upload_content");
         new_file = new JButton("new_file");
         new_dir = new JButton("new_dir");
         logout = new JButton("logout");
@@ -37,6 +38,7 @@ public class TestActivity extends Base {
 
         log.setBorder(Config.REDBORDER);
         upload.setBorder(Config.BLACKBORDER);
+        upload_content.setBorder(Config.BLACKBORDER);
         new_file.setBorder(Config.BLACKBORDER);
         new_dir.setBorder(Config.BLACKBORDER);
         logout.setBorder(Config.BLACKBORDER);
@@ -46,6 +48,7 @@ public class TestActivity extends Base {
         main.add(Box.createRigidArea(new Dimension(1,0)));
         main.add(log);        
         main.add(upload);
+        main.add(upload_content);
         main.add(new_file);
         main.add(new_dir);
         main.add(logout);
@@ -62,6 +65,7 @@ public class TestActivity extends Base {
     private void registerLisener() {
     	addWindowListener(this);
     	upload.addActionListener(this);
+        upload_content.addActionListener(this);
         new_file.addActionListener(this);
         new_dir.addActionListener(this);
         logout.addActionListener(this);
@@ -81,6 +85,8 @@ public class TestActivity extends Base {
         log.setText(e.getActionCommand());
         if(e.getActionCommand() == "upload") {
         	test();
+        } else if(e.getActionCommand() == "upload_content") {
+            test_content();
         } else if(e.getActionCommand() == "new_file") {
             test_new_file();
         } else if(e.getActionCommand() == "new_dir") {
@@ -126,6 +132,25 @@ public class TestActivity extends Base {
         //cnn.setRequestProperty("Connection","close");
         // set the local file path and it will upload to server then.
         cnn.setRequestProperty("LocPath",fm.aPath("wo/data.txt"));
+        cnn.setRequestProperty("Path","data2.txt");
+        request(cnn);
+       
+    }
+
+    // test upload a file to server
+    private void test_content() {
+
+        FileManager fm = new FileManager();
+        Connection cnn = new Connection();
+        /* upload local file to server*/
+        fm.mk("wo/");
+        fm.mk("wo/data.txt");
+        cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+        //cnn.setRequestProperty("Connection","close");
+        // set the local file path and it will upload to server then.
+        //cnn.setRequestProperty("LocPath",fm.aPath("wo/data.txt"));
+        cnn.setRequestProperty("Content","this is a content..  ..  ");
         cnn.setRequestProperty("Path","data2.txt");
         request(cnn);
        

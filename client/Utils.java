@@ -2,6 +2,10 @@ package cloud.client;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import java.math.*;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+
 public class Utils{
 	public static void showTime(){
 		Date date = new Date();
@@ -15,4 +19,11 @@ public class Utils{
         	System.err.println(ex.getMessage());
         }
 	}
+
+	public static String Random(){
+        SecureRandom random = new SecureRandom();
+        byte bytes[] = new byte[20];
+        random.nextBytes(bytes);
+        return String.format("%064x", new BigInteger(1, bytes));
+    }
 }

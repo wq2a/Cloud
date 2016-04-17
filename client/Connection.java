@@ -117,9 +117,6 @@ public class Connection implements Runnable{
                 && !(value.substring(value.length()-1)).equals("/")){
             fm = new FileManager(value);
             fileLength = Integer.parseInt(fm.getLength(value));
-            //setRequestProperty("Length",""+fileLength);
-            //setRequestProperty("Connection","close");
-            //requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
         } else if (field.equals("Path") && value.length()>0 
                 && !(value.substring(value.length()-1)).equals("/")){
             if(fileLength == 0){
@@ -136,6 +133,11 @@ public class Connection implements Runnable{
             setRequestProperty("Length",""+fileLength);
             setRequestProperty("Connection","close");
             requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
+        } else if(field.equals("Content")){
+            fileLength = value.length();
+            fm = new FileManager();
+            fm.setLength(fileLength);
+            fm.setContent(value);
         } else {
             requestPropertys.append(field+":"+SP+value+CRLF);
         }
@@ -157,9 +159,9 @@ public class Connection implements Runnable{
             client = ClientSocket.getInstance();
         }
 
-        System.out.println(toString());
+        //System.out.println(toString());
         temp = client.getResponse(toString(),fm);
-        System.out.println(temp);
+        //System.out.println(temp);
         if(!temp.isEmpty()){
             String r[] = temp.split("\\r?\\n");
             for(int i=0;i<r.length;i++){

@@ -42,25 +42,24 @@ public class ClientWorker implements Runnable{
         String temp;
         try(BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);){
+            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+            InputStream in2 = socket.getInputStream();){
             while((temp=in.readLine()) != null){
 
                 if(temp.isEmpty()){
                     int length = protocol.process(requestStr.toString());
+                    System.out.println("++"+length);
                     byte[] bytes = new byte[0];
                     if(length > 0){
-                    
-                        InputStream in2 = socket.getInputStream();
                         bytes = new byte[length];
                         int count = 0;
+                        out.println("ok");
                         while((count+=in2.read(bytes)) < length){
-
                         }
-                        //in2.closed();
                     }
 
                     out.println(protocol.response(bytes));
-                    
+
                     if(protocol.isClosed())
                         break;
                     requestStr.setLength(0);

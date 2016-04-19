@@ -11,8 +11,6 @@ import java.security.MessageDigest;
 import java.io.IOException;
 import java.util.HashMap;
 
-
-import cloud.client.Auth;
 import cloud.client.FileManager;
 import cloud.client.MyExecutor;
 import cloud.client.Utils;

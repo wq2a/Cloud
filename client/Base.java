@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import cloud.client.Auth;
 import cloud.client.FileManager;
 import cloud.client.MyExecutor;
 import cloud.client.Receiver;

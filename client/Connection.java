@@ -33,7 +33,8 @@ public class Connection implements Runnable{
     public final static int REGISTER = 1;
     public final static int UPLOAD_FILE = 2;
     public final static int GET_PATH = 3;
-    public final static int DELETE_PATH = 4;
+    public final static int GET_FILE = 4;
+    public final static int DELETE_PATH = 5;
 
     private int requestID;
     private int tag;
@@ -118,22 +119,13 @@ public class Connection implements Runnable{
                 && !(value.substring(value.length()-1)).equals("/")){
             fm = new FileManager(value);
             fileLength = Integer.parseInt(fm.getLength(value));
-        } else if (field.equals("Path") && value.length()>0 
-                && !(value.substring(value.length()-1)).equals("/")){
+        } else if (field.equals("Path") && value.length()>0){
             if(fileLength == 0){
                 fm = null;
             }
             setRequestProperty("Length",""+fileLength);
             setRequestProperty("Connection","close");
-            requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
-        } else if (field.equals("Path") && value.length()>0 
-                && (value.substring(value.length()-1)).equals("/")){
-            if(fileLength == 0){
-                fm = null;
-            }
-            setRequestProperty("Length",""+fileLength);
-            setRequestProperty("Connection","close");
-            requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
+            requestPropertys.append(field+":"+SP+value+CRLF);
         } else if(field.equals("Content")){
             fileLength = value.length();
             fm = new FileManager();
@@ -142,7 +134,6 @@ public class Connection implements Runnable{
         } else {
             requestPropertys.append(field+":"+SP+value+CRLF);
         }
-        
     }
 
     public void run(){

@@ -59,7 +59,7 @@ public class ClientSocket{
             if(fm != null){
                 byte[] mybytearray = fm.getContent();
                 OutputStream os = socket.getOutputStream();
-                // wait util server ready
+                // wait until server is ready
                 if(in.readLine() != null){
                     os.write(mybytearray, 0, mybytearray.length);
                 }

@@ -82,11 +82,6 @@ public class Protocol {
         // 
         switch(requestMap.get(METHOD)){
             case GET:
-                responseMap.put("type",GET);
-                if(requestMap.get("Parent") != null){
-                    responseMap.put("data", 
-                        DBManager.getInstance().getPath("data/"+auth.getUser().getUsername()+"/"+requestMap.get("Parent")));
-                }
                 // get file from server
                 // ...
                 break;
@@ -104,18 +99,19 @@ public class Protocol {
                 break;
             case DELETE:
                 // delete file on server
-                // ...
                 if(null!=requestMap.get("Path") && !(requestMap.get("Path")).isEmpty()){
+
                     DBManager.getInstance().delPath("data/"+requestMap.get("Path"));
                     FileManager fm = new FileManager(auth);
                     fm.del(requestMap.get("Path"));
+                    
                 }else{
                     // path is empty
                     responseMap.put(STATUS,NOTFOUND);
                 }
                 break;
             case POST:
-                // responseMap.put("type",POST);
+                // register new user
                 if(requestMap.get("Register")!=null){
                     auth.register(requestMap);
                 }
@@ -124,6 +120,12 @@ public class Protocol {
             default:
                 responseMap.put(STATUS,BADREQUEST);
         }
+
+        if(requestMap.get(METHOD).equals(GET)||requestMap.get(METHOD).equals(PUT)||requestMap.get(METHOD).equals(DELETE)){
+            responseMap.put("private", DBManager.getInstance().getPath("data/"+auth.getUser().getUsername()+"/"));
+            responseMap.put("public", DBManager.getInstance().getPath("data/public/"));
+        }
+
         if(requestMap.get(CONNECTION)!=null&&requestMap.get(CONNECTION).equals(CLOSE)){
             responseMap.put(CONNECTION,CLOSE);
             isClosed = true;

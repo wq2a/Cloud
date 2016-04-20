@@ -15,7 +15,7 @@ public class TestActivity extends Base {
     // views
     private JPanel main;
     private JLabel log;
-    private JButton upload,upload_content,new_file,new_dir,logout,getpath,delpath;
+    private JButton upload,upload_content,new_file,new_dir,logout,getpath,getfile,delpath;
 
     private GridLayout gl;
 
@@ -35,6 +35,7 @@ public class TestActivity extends Base {
         new_dir = new JButton("new_dir");
         logout = new JButton("logout");
         getpath = new JButton("getpath");
+        getfile = new JButton("getfile");
         delpath = new JButton("delpath");
 
         log.setBorder(Config.REDBORDER);
@@ -44,6 +45,7 @@ public class TestActivity extends Base {
         new_dir.setBorder(Config.BLACKBORDER);
         logout.setBorder(Config.BLACKBORDER);
         getpath.setBorder(Config.BLACKBORDER);
+        getfile.setBorder(Config.BLACKBORDER);
         delpath.setBorder(Config.BLACKBORDER);
         main.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -55,6 +57,7 @@ public class TestActivity extends Base {
         main.add(new_dir);
         main.add(logout);
         main.add(getpath);
+        main.add(getfile);
         main.add(delpath);
         
         setContentPane(main);
@@ -73,6 +76,7 @@ public class TestActivity extends Base {
         new_dir.addActionListener(this);
         logout.addActionListener(this);
         getpath.addActionListener(this);
+        getfile.addActionListener(this);
         delpath.addActionListener(this);
     }
 
@@ -101,7 +105,14 @@ public class TestActivity extends Base {
             // get path example
             Connection cnn = new Connection();
             cnn.setRequestMethod(Connection.GET_PATH,"GET");
-            cnn.setRequestProperty("Parent","");
+            //cnn.setRequestProperty("Parent","");
+            request(cnn);
+        } else if (e.getActionCommand() == "getfile"){
+            // get path example
+            Connection cnn = new Connection();
+            cnn.setRequestMethod(Connection.GET_FILE,"GET");
+            cnn.setRequestProperty("Path",Auth.getInstance().getUsername()+"/"+"data2.txt");
+            
             request(cnn);
         } else if (e.getActionCommand() == "delpath"){
             test_del();
@@ -119,9 +130,10 @@ public class TestActivity extends Base {
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
             //System.out.println("Data:"+data.get("data"));
 
-            if(requestID == Connection.GET_PATH){
-                System.out.println("Data:"+data.get("data"));
-            }
+            //if(requestID == Connection.GET_PATH){
+                System.out.println("Data:"+data.get("private"));
+                System.out.println("Data:"+data.get("public"));
+            //}
 		}
         if(tag == 106){
             //moveTo(LoginActivity.class);
@@ -141,7 +153,7 @@ public class TestActivity extends Base {
         //cnn.setRequestProperty("Connection","close");
         // set the local file path and it will upload to server then.
         cnn.setRequestProperty("LocPath",fm.aPath("wo/data.txt"));
-        cnn.setRequestProperty("Path","data2.txt");
+        cnn.setRequestProperty("Path",Auth.getInstance().getUsername()+"/"+"data2.txt");
         request(cnn);
        
     }
@@ -154,7 +166,7 @@ public class TestActivity extends Base {
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
         
         cnn.setRequestProperty("Content","this is a content..  ..  ");
-        cnn.setRequestProperty("Path","data2.txt");
+        cnn.setRequestProperty("Path",Auth.getInstance().getUsername()+"/"+"data2.txt");
         request(cnn);
        
     }
@@ -164,7 +176,7 @@ public class TestActivity extends Base {
         Connection cnn = new Connection();
         cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        cnn.setRequestProperty("Path","data_new.txt");
+        cnn.setRequestProperty("Path",Auth.getInstance().getUsername()+"/"+"data_new.txt");
         request(cnn);
        
     }
@@ -174,7 +186,8 @@ public class TestActivity extends Base {
         Connection cnn = new Connection();
         cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        cnn.setRequestProperty("Path","aaa/");
+        //cnn.setRequestProperty("Path",Auth.getInstance().getUsername()+"/"+"aaa/");
+        cnn.setRequestProperty("Path","public"+"/"+"aaa/");
         request(cnn);
     }
 
@@ -183,7 +196,7 @@ public class TestActivity extends Base {
         Connection cnn = new Connection();
         cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        cnn.setRequestProperty("Path","aaa/");
+        cnn.setRequestProperty("Path",Auth.getInstance().getUsername()+"/"+"aaa/");
         //cnn.setRequestProperty("Path","data_new.txt");
         request(cnn);
     }

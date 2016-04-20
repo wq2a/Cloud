@@ -9,14 +9,79 @@ public class LoginActivity extends Base {
 
     // views
     private JPanel main;
-    private JLabel log;
-    private JTextField username,password;
+    private JLabel log,pw,id;
+    private JTextField username;
+    private JPasswordField password;
     private JButton loginbtn,registerbtn,test_loginbtn;
-    private GridLayout gl;
+    private GridLayout gl,gl2;
+
+    // drop-down select server
+    /*public class ComboBoxes extends JPanel{ 
+       public ComboBoxes(){
+             super(new GridLayout(1,2));         
+                String[] serverStrings = { "Server 1", "Server 2"};
+                JLabel serverlabel = new JLabel("Server Name", JLabel.CENTER);
+                JComboBox serverList = new JComboBox(serverStrings);
+                serverList.setSelectedIndex(1);
+                add(serverlabel);
+                add(serverList);
+       }
+    }*/
+    // End drop-list
 
     // init the view layout here
     private void setLayout(){
-		
+		gl = new GridLayout(5, 0);
+        gl.setVgap(3);      
+        gl2 = new GridLayout(0,2);
+        gl2.setHgap(20);
+        setTitle(" Cloud Login");
+        main = new JPanel(gl);
+        
+        /*JPanel boxpanel = new JPanel();
+        JPanel cbbox = new ComboBoxes();
+        boxpanel.add(cbbox);
+        main.add(boxpanel);*/
+
+        JPanel idpanel = new JPanel(gl2);
+        id = new JLabel("ID", JLabel.CENTER);
+        username = new JTextField("",JTextField.CENTER);
+        idpanel.add(id);
+        idpanel.add(username);
+        idpanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        main.add(idpanel);    
+        
+        JPanel pwpanel = new JPanel(gl2);
+        JLabel pwlabel = new JLabel("Password", JLabel.CENTER);
+        password = new JPasswordField("",JPasswordField.CENTER);
+
+        pwpanel.add(pwlabel);
+        pwpanel.add(password);
+        pwpanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        main.add(pwpanel);
+        
+        loginbtn = new JButton("login");
+        registerbtn = new JButton("register");
+        JPanel button = new JPanel(gl2);
+        button.add(loginbtn);
+        button.add(registerbtn);
+        button.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        main.add(button);
+        main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));              
+
+        JPanel logpanel = new JPanel(new GridLayout(1,1));
+        log = new JLabel("log label");
+        logpanel.add(log);
+        logpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));              
+
+        main.add(logpanel);        
+
+        setContentPane(main);
+        pack();
+        setSize(300,300);
+        setLocation(Config.SCREENDIM.width/2-getSize().width/2, Config.SCREENDIM.height/2-getSize().height/2);
+        setVisible(true);
+        /*
 		gl = new GridLayout(10, 0);
 		gl.setVgap(6);
 		
@@ -46,20 +111,13 @@ public class LoginActivity extends Base {
         main.add(loginbtn);
 		main.add(registerbtn);
         main.add(test_loginbtn);
-        /*main.addComponentListener(new ComponentAdapter(){
-            public void componentResized(ComponentEvent event){
-                Component c = (Component)event.getSource();
-                Dimension dim = c.getSize();
-                //label.setText(dim.width+","+dim.height);
-                // System.out.println(dim.width+","+dim.height);
-            }
-        });*/
+       
         
         setContentPane(main);
         pack();
         setSize(300,500);
         setLocation(Config.SCREENDIM.width/2-getSize().width/2, Config.SCREENDIM.height/2-getSize().height/2);
-        setVisible(true);
+        setVisible(true);*/
     }
 
     // register event lisener
@@ -67,7 +125,7 @@ public class LoginActivity extends Base {
     	addWindowListener(this);
     	registerbtn.addActionListener(this);
         loginbtn.addActionListener(this);
-        test_loginbtn.addActionListener(this);
+        //test_loginbtn.addActionListener(this);
     }
 
 	// initialize the layout
@@ -86,7 +144,7 @@ public class LoginActivity extends Base {
         	Connection cnn = new Connection();
         	// get username and password and check. 
             // username:admin password:password
-        	auth.setAccount(username.getText(),password.getText());
+        	auth.setAccount(username.getText(),String.valueOf(password.getPassword()));
         	cnn.setRequestProperty("Auth",auth.toString());
 			cnn.setRequestMethod(Connection.LOGIN,"POST");
             cnn.setTag(106);
@@ -102,6 +160,8 @@ public class LoginActivity extends Base {
             cnn.setTag(106);
             request(cnn);
         }else if(e.getActionCommand() == "register"){
+            //moveTo(RegisterActivity.class);
+            
             Auth auth = Auth.getInstance();
             Connection cnn = new Connection();
             
@@ -118,6 +178,7 @@ public class LoginActivity extends Base {
             cnn.setRequestMethod(Connection.REGISTER,"POST");
 
             request(cnn);
+            
         }
     }
 
@@ -136,7 +197,7 @@ public class LoginActivity extends Base {
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
 
             if(tag == 106 && data.get("Status").equals(Connection.OK)){
-                moveTo(TestActivity.class);
+                moveTo(MainActivity.class);
             }
 
             if(requestID == Connection.REGISTER && data.get("Status").equals(Connection.OK)){

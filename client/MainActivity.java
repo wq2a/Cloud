@@ -1,114 +1,122 @@
 package cloud.client;
-
 import java.util.HashMap;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
+import java.io.File;
+
+import javax.swing.JTree;
+
+import cloud.client.FileTreeCellRenderer;
 
 public class MainActivity extends Base {
 
-    // views
     private JPanel main;
     private JLabel log;
-    private JButton upload,logout,getpath;
 
+    private JButton upload,logout;
     private GridLayout gl;
-
-    // init the view layout here
-    private void setLayout() {
-		
-		gl = new GridLayout(10, 0);
-		gl.setVgap(6);
-		
-		setTitle("Main");
+//    private JPanel treepanel;
+    private Tree treepanel;
+    private void setLayout(){   
+        setTitle("Main Program");
         
-		main = new JPanel(gl);
+        main = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
         log = new JLabel("");
         upload = new JButton("upload");
         logout = new JButton("logout");
-        getpath = new JButton("getpath");
-
-        log.setBorder(Config.REDBORDER);
-        upload.setBorder(Config.BLACKBORDER);
-        logout.setBorder(Config.BLACKBORDER);
-        getpath.setBorder(Config.BLACKBORDER);
-        main.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        main.add(Box.createRigidArea(new Dimension(1,0)));
-        main.add(log);        
-        main.add(upload);
-        main.add(logout);
-        main.add(getpath);
+        treepanel = new Tree();
+            //treepanel.setCellRenderer(new FileTreeCellRenderer());
         
+        c.insets = new Insets(0, 0, 0, 0);
+//        c.fill = GridBagConstraints.BOTH;
+        c.weightx = 0.0;
+        c.gridwidth = 3;
+        c.gridheight = 1;
+        c.gridx = 0;
+        c.gridy = 0;
+//        treepanel.setBorder(Config.BLACKBORDER);        
+        main.add(treepanel, c);
+        
+        JPanel buttonpanel = new JPanel(new GridLayout(1,4));
+        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+
+        buttonpanel.add(upload);
+        buttonpanel.add(logout);
+ //       buttonpanel.setBorder(Config.BLACKBORDER);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.0;
+        c.gridheight = 1;
+        c.gridwidth = 3;
+        c.gridx = 1;
+        c.gridy = 1;
+        main.add(buttonpanel,c);
+
+        JPanel logpanel = new JPanel();
+        logpanel.add(log);
+        c.gridx = 0;
+        c.gridy = 2;
+        main.add(logpanel,c);
+
+        
+//      main.add(Box.createRigidArea(new Dimension(1,0)));
+
         setContentPane(main);
         pack();
         setSize((int)(Config.SCREENDIM.width*0.7),(int)(Config.SCREENDIM.height*0.7));
         setLocation(Config.SCREENDIM.width/2-getSize().width/2, Config.SCREENDIM.height/2-getSize().height/2);
-        setVisible(true);
+        setVisible(true);   
+        
     }
-
+    
     // register event lisener
-    private void registerLisener() {
-    	addWindowListener(this);
-    	upload.addActionListener(this);
+    private void registerLisener(){
+        addWindowListener(this);
+        upload.addActionListener(this);
         logout.addActionListener(this);
-        getpath.addActionListener(this);
     }
 
-	// initialize the layout
-	public void start() {
-		setLayout();
-		registerLisener();
-	}
+    // initialize the layout
+    public void start(){
+        setLayout();
+        registerLisener();
+    }
 
-	/*
-	 * click event here
-	 */
-	public void actionPerformed(ActionEvent e) {
-        log.setText(e.getActionCommand());
+    /*
+     * click event here
+     */
+    public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand() == "upload") {
-        	test();
-        } else if (e.getActionCommand() == "logout"){
+            JFileChooser fileChooser = new JFileChooser();
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+              File selectedFile = fileChooser.getSelectedFile();
+              treepanel.AddtoTextArea(selectedFile.getName());
+              treepanel.AddtoNewFile(selectedFile.getName());
+            }
+        } else if (e.getActionCommand() == "logout") {
             exit();
-        } else if (e.getActionCommand() == "getpath"){
-            // get path example
-            Connection cnn = new Connection();
-            cnn.setRequestMethod(Connection.GET_PATH,"GET");
-            cnn.setRequestProperty("tt","root");
-            request(cnn);
         }
     }
 
-	// receive data, still process in background thread, heavy work here
-	public HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data){
-		
-		return data;
-	}
+    
 
-	// receive data which need to display, in UI thread
-	public void receive(int requestID,int tag,HashMap<String,String> data){
-
-		if(data != null){
-            System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
-            System.out.println("Data:"+data.get("data"));
-		}
-        if(tag == 106){
-            //moveTo(LoginActivity.class);
+    // receive data, still process in background thread, heavy work here
+    public HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data){
+        if(requestID == Connection.GET_PATH){
+            return null;
         }
-	}
+        return data;
+    }
 
-    // test
-    private void test() {
-        FileManager fm = new FileManager();
-        fm.mk("wo/");
-        fm.mk("wo/data.txt");
+    // receive data which need to display, in UI thread
+    public void receive(int requestID,int tag,HashMap<String,String> data){
 
-        Connection cnn = new Connection();
-        cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
-        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-        cnn.setRequestProperty("Connection","close");
-        cnn.setRequestProperty("Path","wo/data.txt");
-        request(cnn);
+        if(data != null){
+            System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
+        }
+        
     }
 }

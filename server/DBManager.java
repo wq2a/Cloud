@@ -51,7 +51,6 @@ public class DBManager{
 		}catch(SQLException se){
       		se.printStackTrace();
    		}catch(Exception e){
-      		//Handle errors for Class.forName
       		e.printStackTrace();
    		}finally{
      		return user;
@@ -129,7 +128,8 @@ public class DBManager{
 	}
 
 	public String getPath(String path){
-		String result = "";
+		//String result = "";
+		StringBuffer result = new StringBuffer();
 		try{
 			int parent = -1;
 
@@ -138,6 +138,7 @@ public class DBManager{
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()){
 				parent = rs.getInt("id");
+				result.append(path);
 			}
 
 			sql = "SELECT * FROM path p "+
@@ -149,17 +150,21 @@ public class DBManager{
 			PathManager pm = new PathManager();
 			while(rs.next()){
 				// format tree
-				//System.out.println(rs.getInt("id")+","+rs.getString("name")+","+
-					//rs.getString("path")+","+rs.getInt("ancestor")+","+rs.getInt("descendant")+","+rs.getInt("depth"));
-				pm.add(new Path(rs.getInt("id"),rs.getString("name"),rs.getInt("parent"),rs.getInt("depth"),rs.getInt("type")));
+				// System.out.println(rs.getInt("id")+","+rs.getString("name")+","+
+					// rs.getString("path")+","+rs.getInt("ancestor")+","+rs.getInt("descendant")+","+rs.getInt("depth"));
+				
+				// pm.add(new Path(rs.getInt("id"),rs.getString("name"),rs.getInt("parent"),rs.getInt("depth"),rs.getInt("type")));
+
+				result.append(rs.getString("path")).append(";");
 			}
-			result = pm.generateXML();
+			//result = pm.generateXML();
+
 		}catch(SQLException se){
       		se.printStackTrace();
    		}catch(Exception e){
       		e.printStackTrace();
    		}finally{
-      		return result;
+      		return result.toString();
    		}
 	}
 
@@ -327,25 +332,23 @@ public class DBManager{
 			stmt.executeUpdate(sql);
 			
 			insertPath("data/");
-			/*insertPath("data/admin/");
-			insertPath("data/admin/aaa/");
-			insertPath("data/admin/aaa/ccc/");
-			insertPath("data/admin/aaa/ccc/ddd.txt");
-			insertPath("data/admin/aaa/ccc.txt");
-			insertPath("data/admin/aaa/bbb.txt");
-			insertPath("data/admin/bbb/");
-			insertPath("data/admin/pp/");
-			insertPath("data/admin/pp/aa/");*/
-			//System.out.println(getPath("data/wq2a/"));
-			//delPath("data/wq2a/");
-			//System.out.println(getPath("data/"));
 			
+			// create root directory
 			FileManager fm = new FileManager();
 			fm.mkdirROOT();
 
+			// create an admin
 			User user = new User();
 			user.setUsername("admin");
 			Auth auth = new Auth();
+			auth.insertAdmin(user,"password");
+			fm = new FileManager(user);
+			fm.mkdir("");
+
+			// create a shared location
+			user = new User();
+			user.setUsername("public");
+			auth = new Auth();
 			auth.insertAdmin(user,"password");
 			fm = new FileManager(user);
 			fm.mkdir("");

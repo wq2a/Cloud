@@ -14,6 +14,6 @@ client:	client/*.java
 	java cloud.client.Client
 
 clean:
-	rm -rf cloud
+	sudo rm -rf cloud
 
 .PHONY: all server client clean

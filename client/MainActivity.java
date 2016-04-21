@@ -17,12 +17,12 @@ import java.io.File;
 import javax.swing.JTree;
 import cloud.client.FileTreeCellRenderer;
 
-public class MainActivity extends Base implements TreeSelectionListener{
+public class MainActivity extends Base implements TreeSelectionListener, MouseListener{
 
     private JPanel main;
     private JLabel log;
 
-    private JButton upload,save,getfile_btn,newfile_btn,newdir_btn,delfile_btn,logout;
+    private JButton upload,save,getfile_btn,editfile_btn,newfile_btn,newdir_btn,delfile_btn,logout;
     private GridLayout gl;
 
     private JPanel myPanel;
@@ -46,7 +46,8 @@ public class MainActivity extends Base implements TreeSelectionListener{
         upload = new JButton("upload");
         save = new JButton("save");
         logout = new JButton("logout");
-        getfile_btn = new JButton("getfile_btn");
+        //getfile_btn = new JButton("getfile_btn");
+        editfile_btn = new JButton("editfile_btn");
         newfile_btn = new JButton("newfile_btn");
         newdir_btn = new JButton("newdir_btn");
         delfile_btn = new JButton("delfile_btn");
@@ -74,9 +75,8 @@ public class MainActivity extends Base implements TreeSelectionListener{
         myPanel.add(treePanel); 
 
         textArea = new JTextArea(30,35);
-        //textArea.setEditable(false);
+        textArea.setEditable(false);
         textArea.append("Printout Contents");
-        
 
         main.add(myPanel,BorderLayout.LINE_START);
         main.add(new JScrollPane(textArea),BorderLayout.CENTER); 
@@ -88,7 +88,8 @@ public class MainActivity extends Base implements TreeSelectionListener{
         buttonpanel.add(upload);
         buttonpanel.add(save);
         buttonpanel.add(logout);
-        buttonpanel.add(getfile_btn);
+        //buttonpanel.add(getfile_btn);
+        buttonpanel.add(editfile_btn);
         buttonpanel.add(newfile_btn);
         buttonpanel.add(newdir_btn);
         buttonpanel.add(delfile_btn);
@@ -119,10 +120,12 @@ public class MainActivity extends Base implements TreeSelectionListener{
         save.addActionListener(this);
         logout.addActionListener(this);
         newdir_btn.addActionListener(this);
-        getfile_btn.addActionListener(this);
+        //getfile_btn.addActionListener(this);
+        editfile_btn.addActionListener(this);
         newfile_btn.addActionListener(this);
         delfile_btn.addActionListener(this);
         tree.addTreeSelectionListener(this);
+        tree.addMouseListener(this);
     }
 
     // initialize the layout
@@ -186,7 +189,13 @@ public class MainActivity extends Base implements TreeSelectionListener{
             cnn.setRequestProperty("Auth",Auth.getInstance().toString());
             cnn.setRequestProperty("Path",currentPath);
             request(cnn);
-        } else if (e.getActionCommand() == "getfile_btn"){
+        } else if (e.getActionCommand() == "editfile_btn"){
+            // get lock
+            textArea.setEditable(true);
+        } 
+        /*else if (e.getActionCommand() == "getfile_btn"){
+            
+            textArea.setEditable(false);
             Connection cnn = new Connection();
             cnn.setRequestMethod(Connection.GET_FILE,"GET");
             cnn.setRequestProperty("File","");
@@ -194,7 +203,8 @@ public class MainActivity extends Base implements TreeSelectionListener{
             cnn.setRequestProperty("Auth",Auth.getInstance().toString());
             request(cnn);
             System.out.println("ppp"+currentPath);
-        }
+            
+        } */
     }
 
     public void valueChanged(TreeSelectionEvent e) {
@@ -210,6 +220,53 @@ public class MainActivity extends Base implements TreeSelectionListener{
         if (node.isLeaf() && node.getFileType() == 1){
             //textArea.setText(node.getP());
         }
+    }
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+            if (path != null) {
+                System.out.println(path.getLastPathComponent());
+                FileNode node = (FileNode) tree.getLastSelectedPathComponent();
+                if (node == null) {
+                    currentPath = "";
+                    return;
+                } else {
+                    currentPath = node.getP();
+                
+                    if(node.getFileType() == 1){
+                        textArea.setEditable(false);
+                        Connection cnn = new Connection();
+                        cnn.setRequestMethod(Connection.GET_FILE,"GET");
+                        cnn.setRequestProperty("File","");
+                        cnn.setRequestProperty("Path",currentPath);
+                        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                        request(cnn);
+                        System.out.println("ppp"+currentPath);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 
     // receive data, still process in background thread, heavy work here

@@ -328,6 +328,7 @@ public class DBManager{
                   " parent INTEGER NOT NULL, " +
                   " path VARCHAR(255) NOT NULL, " +
                   " type INTEGER NOT NULL DEFAULT 0, " +
+                  " editmode INTEGER DEFAULT 0, " +
                   " PRIMARY KEY ( id ))";
 			stmt.executeUpdate(sql);
 			sql = "CREATE TABLE IF NOT EXISTS path_closure" +

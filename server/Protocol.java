@@ -39,6 +39,8 @@ public class Protocol {
     private int length;
     private HashMap<String,String> requestMap;
     private HashMap<String,String> responseMap;
+    private String filePath = "";
+    private int fileLength = 0;
     private StringBuffer response;
     private boolean isClosed;
 
@@ -84,6 +86,15 @@ public class Protocol {
             case GET:
                 // get file from server
                 // ...
+                if(null!=requestMap.get("File")&&null!=requestMap.get("Path")){
+                    FileManager fm = new FileManager();
+                    
+                    responseMap.put("File",requestMap.get("Path"));
+                    filePath = requestMap.get("Path");
+                    fileLength = Integer.parseInt(fm.getLength(requestMap.get("Path")));
+                    responseMap.put("Length",fileLength+"");
+                   
+                }
                 break;
             case PUT:
                 this.bytes = bytes;
@@ -171,6 +182,14 @@ public class Protocol {
                 System.err.println(e.getMessage());
             }
         }
+    }
+
+    public String getFilePath(){
+        return filePath;
+    }
+
+    public int getFileLength(){
+        return fileLength;
     }
 
     public boolean isClosed(){

@@ -8,16 +8,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 public class Tree extends JPanel{
-    TreeArea TreeArea;
+    TreeArea treeArea;
     JTextArea textArea;
-    FileObject fo;
+    FileNode fo;
     final static String newline = "\n";
     
     
-    public Tree() {
+    public Tree(TreeNode nodeTree) {
         super(new GridLayout(1,2,1,2));
-        TreeArea = new TreeArea();
-        add(TreeArea);
+        treeArea = new TreeArea(nodeTree);
+        add(treeArea);
         textArea = new JTextArea(30,35);
         textArea.setEditable(false);
         textArea.append("Printout Contents");
@@ -28,10 +28,10 @@ public class Tree extends JPanel{
     class TreeArea extends JScrollPane implements TreeSelectionListener{
 
         JTree tree;     
-        public TreeArea() {
-            TreeNode NodeTree = createNodes();
+        public TreeArea(TreeNode nodeTree) {
+            //TreeNode NodeTree = createNodes();
 //            TreeNode NodeTree = AddNode("Root");
-            tree = new JTree(NodeTree);
+            tree = new JTree(nodeTree);
             tree.setCellRenderer(new FileTreeCellRenderer());
             tree.expandRow(0);
             tree.setRootVisible(false);
@@ -41,6 +41,7 @@ public class Tree extends JPanel{
         public void setTreeSelectionListener(TreeSelectionListener tslistener){
             tree.addTreeSelectionListener(tslistener);
         }
+        /*
         private TreeNode createNodes() {
             fo = new FileObject("");
         	String database = "admin/;admin/;admin/;admin/data_new.txt;admin/data2.txt;public/aaa/";
@@ -50,7 +51,9 @@ public class Tree extends JPanel{
           	  	fo.AddPath(paths[i].split("/"),paths[i]);
             }
       	  	return fo;
-        }
+        }*/
+
+        
         /*private void addNewFile(String newnodename){
         	FileObject node = (FileObject) tree.getLastSelectedPathComponent();        	
         	String path[] = { newnodename };
@@ -62,7 +65,7 @@ public class Tree extends JPanel{
         // Tree Selection Event
         
         public void valueChanged(TreeSelectionEvent e) {
-        	FileObject node = (FileObject) tree.getLastSelectedPathComponent();        	
+        	FileNode node = (FileNode) tree.getLastSelectedPathComponent();        	
         	 if (node == null) return;
         	 else if(node.isLeaf() && node.getFileType()==1){
 

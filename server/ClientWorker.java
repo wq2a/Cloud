@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.lang.*;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -43,7 +45,8 @@ public class ClientWorker implements Runnable{
         try(BufferedReader in = new BufferedReader(
                 new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-            InputStream in2 = socket.getInputStream();){
+            InputStream in2 = socket.getInputStream();
+            OutputStream os = socket.getOutputStream();){
             while((temp=in.readLine()) != null){
 
                 if(temp.isEmpty()){
@@ -66,6 +69,19 @@ public class ClientWorker implements Runnable{
                     requestStr.append(temp+CRLF);
                 }
             }
+
+            if(!(protocol.getFilePath().isEmpty())){
+                FileManager fm = new FileManager();
+                byte[] mybytearray = fm.getContent(protocol.getFilePath());
+                
+                if(mybytearray == null){
+                    mybytearray = new byte[protocol.getFileLength()];
+                }
+                if(in.readLine() != null){
+                    os.write(mybytearray, 0, mybytearray.length);
+                }
+            }
+
             Log.getInstance().print("["+workerID+"]"+"closed");
             workers.remove(workerID);
             socket.close();

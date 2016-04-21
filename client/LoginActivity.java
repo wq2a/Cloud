@@ -160,8 +160,8 @@ public class LoginActivity extends Base {
             cnn.setTag(106);
             request(cnn);
         }else if(e.getActionCommand() == "register"){
-            //moveTo(RegisterActivity.class);
-            
+            moveTo(RegisterActivity.class);
+            /*
             Auth auth = Auth.getInstance();
             Connection cnn = new Connection();
             
@@ -178,6 +178,7 @@ public class LoginActivity extends Base {
             cnn.setRequestMethod(Connection.REGISTER,"POST");
 
             request(cnn);
+            */
             
         }
     }

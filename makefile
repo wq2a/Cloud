@@ -10,6 +10,7 @@ serverClean:	server/*.java
 
 client:	client/*.java
 	javac client/*.java -d .
+	sudo cp -r resources cloud/client/
 	java cloud.client.Client
 
 clean:

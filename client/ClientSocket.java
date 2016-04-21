@@ -9,6 +9,7 @@ public class ClientSocket{
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private InputStream in2;
     private StringBuffer response;
 
     private String hostName;
@@ -33,6 +34,7 @@ public class ClientSocket{
             socket = new Socket(hostName,portNumber);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            in2 = socket.getInputStream();
             // System.out.println("established");
         } catch (UnknownHostException e) {
             System.err.println("Host unknown. Cannot establish connection");
@@ -47,7 +49,7 @@ public class ClientSocket{
         return instance;
     }
 
-    public String getResponse(String request,FileManager fm){
+    public String getResponse(int requestID,String request,FileManager fm){
         if(socket == null)
             connect();
         try{
@@ -71,13 +73,27 @@ public class ClientSocket{
                 response.append(fromServer+CRLF);
             }
 
-            if(!code.equals(instance.getCode())){
+            if(!code.equals(instance.getCode())&&requestID!=Connection.GET_FILE){
                 disconnect();
             }
         }catch(Exception e){
             System.err.println("Cannot establish connection. Server may not be up."+e.getMessage());
         }
         return response.toString();
+    }
+
+    public String getFile(int length) throws Exception{
+        byte[] bytes = new byte[0];
+
+        if(length > 0){
+            bytes = new byte[length];
+            int count = 0;
+            out.println("ok");
+            while((count+=in2.read(bytes)) < length){
+            }
+        }
+        disconnect();
+        return new String(bytes,"UTF-8");
     }
 
     public void disconnect(){

@@ -129,6 +129,7 @@ public class DBManager{
 
 	public String getPath(String path){
 		//String result = "";
+		String prefix = "";
 		StringBuffer result = new StringBuffer();
 		try{
 			int parent = -1;
@@ -138,7 +139,8 @@ public class DBManager{
 			ResultSet rs = stmt.executeQuery(sql);
 			if(rs.next()){
 				parent = rs.getInt("id");
-				result.append(path);
+				result.append(path.substring(5));
+				prefix = ";";
 			}
 
 			sql = "SELECT * FROM path p "+
@@ -148,14 +150,18 @@ public class DBManager{
 			rs = stmt.executeQuery(sql);
 
 			PathManager pm = new PathManager();
-			while(rs.next()){
+
+			while(rs!=null && rs.next()){
 				// format tree
 				// System.out.println(rs.getInt("id")+","+rs.getString("name")+","+
 					// rs.getString("path")+","+rs.getInt("ancestor")+","+rs.getInt("descendant")+","+rs.getInt("depth"));
 				
 				// pm.add(new Path(rs.getInt("id"),rs.getString("name"),rs.getInt("parent"),rs.getInt("depth"),rs.getInt("type")));
-
-				result.append(rs.getString("path")).append(";");
+				result.append(prefix);
+				if(rs.getString("path")!=null){
+					result.append(rs.getString("path").substring(5));
+				}
+				//result.append(rs.getString("path").substring(5));//.append(";");
 			}
 			//result = pm.generateXML();
 

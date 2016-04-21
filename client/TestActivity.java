@@ -65,6 +65,8 @@ public class TestActivity extends Base {
         setSize((int)(Config.SCREENDIM.width*0.3),(int)(Config.SCREENDIM.height*0.6));
         setLocation(Config.SCREENDIM.width/2-getSize().width/2, Config.SCREENDIM.height/2-getSize().height/2);
         setVisible(true);
+
+        
     }
 
     // register event lisener
@@ -134,6 +136,8 @@ public class TestActivity extends Base {
                 System.out.println("Data:"+data.get("private"));
                 System.out.println("Data:"+data.get("public"));
             //}
+
+           
 		}
         if(tag == 106){
             //moveTo(LoginActivity.class);

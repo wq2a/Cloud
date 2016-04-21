@@ -103,7 +103,7 @@ public class RegisterActivity extends Base {
             Connection cnn = new Connection();
             
             String username = "example";
-            String password = "pas";
+            String password = "password";
             auth.setAccount(username,password);
 
             // these three are optional
@@ -117,15 +117,13 @@ public class RegisterActivity extends Base {
             request(cnn);
 
         }else if (e.getActionCommand() == "Cancel"){
-        	moveTo(LoginActivity.class);
+            exit();
+        	//moveTo(LoginActivity.class);
         }
     }
 
 	// receive data, still process in background thread, heavy work here
 	public HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data){
-		if(requestID == Connection.GET_PATH){
-			return null;
-		}
 		return data;
 	}
 
@@ -134,10 +132,11 @@ public class RegisterActivity extends Base {
 
 		if(data != null){
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
+            if(requestID == Connection.REGISTER&&data.get("Status").equals("200")){
+                moveTo(MainActivity.class);
+            }
 		}
-        if(tag == 106){
-            //moveTo(LoginActivity.class);
-        }
+        
 	}
 
     // test

@@ -117,4 +117,23 @@ public class FileManager{
 		return true;
 	}
 
+	public byte[] getContent(String path) {
+		try{
+			File fo = new File(home.toString()+path);
+        	byte[] mybytearray = new byte[(int) fo.length()];
+        	BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
+        	bis.read(mybytearray, 0, mybytearray.length);
+        	return mybytearray;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+
+	public String getLength(String path){
+		//File fo = new File(aPath(relativePath));
+		File fo = new File(home.toString()+path);
+		return ""+fo.length();
+	}
+
 }

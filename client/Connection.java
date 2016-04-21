@@ -145,13 +145,13 @@ public class Connection implements Runnable{
         String temp;
         ClientSocket client;
 
-        if(method.equals(PUT+CRLF) || method.equals(DELETE+CRLF) ){
+        if(method.equals(PUT+CRLF) || method.equals(DELETE+CRLF) || requestID == Connection.GET_FILE){
             client = new ClientSocket();
         }else{
             client = ClientSocket.getInstance();
         }
 
-        temp = client.getResponse(toString(),fm);
+        temp = client.getResponse(requestID,toString(),fm);
         if(!temp.isEmpty()){
             String r[] = temp.split("\\r?\\n");
             for(int i=0;i<r.length;i++){
@@ -166,6 +166,18 @@ public class Connection implements Runnable{
                     }
                 }
             }
+        }
+
+        if(requestID == Connection.GET_FILE){// && response.get("Length")!=null){
+
+            int length = Integer.parseInt(response.get("Length"));
+            try{
+                String tt= client.getFile(length);
+                response.put("Content",tt);
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+            
         }
 
         callback.response(requestID,tag,rcallback,response);

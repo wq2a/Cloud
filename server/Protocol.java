@@ -81,11 +81,10 @@ public class Protocol {
         }
         
         responseMap.put(STATUS,OK);
-        // 
+
         switch(requestMap.get(METHOD)){
             case GET:
-                // get file from server
-                // ...
+                
                 if(null!=requestMap.get("File")&&null!=requestMap.get("Path")){
                     FileManager fm = new FileManager();
                     

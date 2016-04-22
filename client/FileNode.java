@@ -48,7 +48,6 @@ public void AddPath(String[] path,String p){
         }
     }
     setPath(p);
-    
 }
 
   public void setFileType(int fileType){
@@ -91,6 +90,10 @@ public void AddPath(String[] path,String p){
 
   public void add(String childName, FileNode node){
     childNodes.put(childName, node);
+  }
+
+  public void del(String childName){
+    childNodes.remove(childName);
   }
 
    /*@Override

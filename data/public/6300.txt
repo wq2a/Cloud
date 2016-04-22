@@ -1,0 +1,76 @@
+connectivity
+
+tracert www.google.com	traceroute www.google.com
+
+Hierarchical Routing
+
+Network Topology:[Host A]->(Router)->(Router)->[Host B]
+
+Data Flow:
+[Application]<-process-to-process->[Application]
+[Transport]<-host-to-host->[Transport]
+[Internet]
+[Link]
+
+Encapsulation:
+[Message]		[Application]
+segment/datagram[Ht][M]	[Transport]
+packet[Hn][Ht][M]	[Network]
+frame[Hi][Hn][Ht][M]	[Link]
+			[Physical]
+
+[Data]					[Application]
+[UDPheader][UDPdata]			[Transport]
+[IPheader][IPdata]			[Network]
+[Frameheader][Framedata][Framefooter]	[Link]
+
+Why layering:
+Reduce design complexity
+The design can evolve more easily
+
+each layer provides a service to the layer above
+each layer communicates with its peer layer in another node through a protocol
+
+TCP/IP model
+[Application]supporting networking application
+FTP,SMTP,HTTP
+[Transport]host-to-host data transfer
+TCP,UDP
+[Network]routing and forwarding of datagrams from source to destination
+IP
+-packet format
+-addressing conventions
+-packet handling conventions
+|
+routing table
+|
+routing protocols
+-path selection
+-RIP,OSPF,BGP
+ICMP protocol
+-error reporting
+-router signaling
+[Link]data transfer between neighboring network elements
+PPP,Ethernet
+[Physical]bits on the wire
+
+OSI reference model
+[Application]	APDU
+[Presentation]	PPDU
+[Session]	SPDU
+[Transport]	TPDU
+[Network]	Packet
+[Data link]	Frame
+[Physical]	Bit
+
+IPv4 Format
+
+IP address:32-bit identifier for host,router interface
+Interface:connection between host,router and physical link
+
+Special Purpose Addresses
+0.0.0.0/8:broadcast messages to the current network
+255.255.255.255/32:any host on the local subnet
+127.0.0.0/8:loopback addresses to the local host
+10.0.0.0/8 or 192.168.0.0/16:local communications within aprivate network
+

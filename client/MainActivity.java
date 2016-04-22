@@ -316,22 +316,29 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                     if(!(nodePathsTemp.contains(temp))){
                         //System.out.println("node name==''''"+temp);
                         String[] nodeName = temp.split("/");
+                        FileNode parentNode = null;
                         FileNode delNode = fo;
+                        String delName = "";
                         
                         for(String name:nodeName){
                             //System.out.println("node name=="+delNode.getNodeName()+name);
                             if(delNode != null){
+                                parentNode = delNode;
                                 delNode = delNode.get(name);
                             }else{
                                 System.out.println("is null node name=="+delNode);
                             }
+                            delName = name;
                         }
 
-                        
                         if(delNode != null && delNode != fo){
                             treeModel.removeNodeFromParent(delNode);
                             toDel.add(temp);
                             //nodePaths.remove(temp);
+                        }
+
+                        if(parentNode != null && !delName.isEmpty()){
+                            parentNode.del(delName);
                         }
                     }
                 }

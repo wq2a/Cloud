@@ -18,7 +18,7 @@ public class ClientSocket{
     private String code;
 
     ClientSocket(){
-        hostName = "localhost";
+        hostName = "localhost";//"52.87.188.170";
         portNumber = 9900;
         response = new StringBuffer();
         code = Utils.Random();

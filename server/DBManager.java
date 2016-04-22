@@ -67,8 +67,9 @@ public class DBManager{
 				return false;
 			}
 			sql = "INSERT INTO user" +
-			  	  "(username,h2,salt,firstname,lastname,email)" +
-			  	  "VALUES('"+user.getUsername() +
+			  	  "(id,username,h2,salt,firstname,lastname,email)" +
+			  	  "VALUES(" + user.getUsername().hashCode() +
+			  	  ",'"+user.getUsername() +
 			  	  "','" + user.getH2() +
 			      "','" + user.getSalt() +
 			      "','" + user.getFirstname() +
@@ -251,8 +252,9 @@ public class DBManager{
 				}
 			}
 			sql = "INSERT INTO path" +
-			  	  "(name,parent,path,type)" +
-			  	  "VALUES('"+name +
+			  	  "(id,name,parent,path,type)" +
+			  	  "VALUES(" + path.hashCode() +
+			  	  ",'"+ name +
 			  	  "'," + parent +
 			      ",'" + path +
 			      "'," + type +
@@ -261,13 +263,17 @@ public class DBManager{
 			PreparedStatement stmt = getConnection().prepareStatement(
                            sql, Statement.RETURN_GENERATED_KEYS);
 
-			if(stmt.executeUpdate()==0)
+			if(stmt.executeUpdate()==0){
 				return id;
+			}else{
+				id = path.hashCode();
+			}
+				
 
-			ResultSet generatedKeys = stmt.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                id = generatedKeys.getInt(1);
-            }
+			//ResultSet generatedKeys = stmt.getGeneratedKeys();
+            //if (generatedKeys.next()) {
+                //id = generatedKeys.getInt(1);
+            //}
 
             Statement statement = getConnection().createStatement();
             
@@ -311,7 +317,8 @@ public class DBManager{
 			stmt = getConnection().createStatement();
 			// User table
 			sql = "CREATE TABLE IF NOT EXISTS user" +
-                  "(id INTEGER not NULL AUTO_INCREMENT, " +
+                  //"(id INTEGER not NULL AUTO_INCREMENT, " +
+				  "(id INTEGER NOT NULL, " +
                   " username VARCHAR(255), " +
                   " h2 VARCHAR(255), " +
                   " salt VARCHAR(255), " +
@@ -323,7 +330,8 @@ public class DBManager{
 
 			// Path Closure Tables
 			sql = "CREATE TABLE IF NOT EXISTS path" +
-                  "(id INTEGER not NULL AUTO_INCREMENT, " +
+                  //"(id INTEGER not NULL AUTO_INCREMENT, " +
+                  "(id INTEGER NOT NULL, " +
                   " name VARCHAR(255) NOT NULL, " +
                   " parent INTEGER NOT NULL, " +
                   " path VARCHAR(255) NOT NULL, " +

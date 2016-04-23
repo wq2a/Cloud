@@ -33,4 +33,8 @@ public class CloudDAOFactory extends DAOFactory{
 	public SyncDAO getSyncDAO() {
 		return new CloudSyncDAO();
 	}
+
+	public ModeDAO getModeDAO() {
+		return new CloudModeDAO();
+	}
 }

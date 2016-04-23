@@ -167,6 +167,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             cnn.setRequestProperty("Content",textArea.getText());
             cnn.setRequestProperty("Path",currentPath);
             request(cnn);
+            textArea.setEditable(false);
         } else if (e.getActionCommand() == "newfile_btn"){
             Random rand = new Random();
             int  n = rand.nextInt(500) + 1;
@@ -189,9 +190,21 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             cnn.setRequestProperty("Auth",Auth.getInstance().toString());
             cnn.setRequestProperty("Path",currentPath);
             request(cnn);
-        } else if (e.getActionCommand() == "editfile_btn"){
+        } 
+        else if (e.getActionCommand() == "editfile_btn"){
             // get lock
-            textArea.setEditable(true);
+            
+            if (currentPath != null) {
+                if(!currentPath.isEmpty() && !(currentPath.substring(currentPath.length() - 1)).equals("/")){
+                    Connection cnn = new Connection();
+                    cnn.setRequestMethod(Connection.LOCK,"POST");
+                    cnn.setRequestProperty("EditMode","");
+                    cnn.setRequestProperty("Path",currentPath);
+                    cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                    request(cnn);
+                    //textArea.setEditable(true);
+                }
+            }
         } 
         /*else if (e.getActionCommand() == "getfile_btn"){
             
@@ -223,7 +236,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
     }
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
+        /*if (e.getClickCount() == 2) {
             TreePath path = tree.getPathForLocation(e.getX(), e.getY());
             if (path != null) {
                 System.out.println(path.getLastPathComponent());
@@ -239,11 +252,40 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                         Connection cnn = new Connection();
                         cnn.setRequestMethod(Connection.GET_FILE,"GET");
                         cnn.setRequestProperty("File","");
+                        cnn.setRequestProperty("EditMode","");
                         cnn.setRequestProperty("Path",currentPath);
                         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
                         request(cnn);
-                        System.out.println("ppp"+currentPath);
+                        //System.out.println("ppp"+currentPath);
                     }
+                    textArea.setEditable(true);
+                }
+            }
+        }else */
+        if(e.getClickCount() == 1 || e.getClickCount() == 2){
+            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+            if (path != null) {
+                //System.out.println(path.getLastPathComponent());
+                FileNode node = (FileNode) tree.getLastSelectedPathComponent();
+                if (node == null) {
+                    currentPath = "";
+                    return;
+                } else {
+                    currentPath = node.getP();
+                
+                    if(node.getFileType() == 1){
+                        textArea.setEditable(false);
+                        Connection cnn = new Connection();
+                        cnn.setRequestMethod(Connection.GET_FILE,"GET");
+                        cnn.setRequestProperty("File","");
+                        cnn.setRequestProperty("Path",currentPath);
+                        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                        request(cnn);
+                        //System.out.println("ppp"+currentPath);
+                    }else{
+                        textArea.setText("");
+                    }
+                    textArea.setEditable(false);
                 }
             }
         }
@@ -295,9 +337,16 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
 
             if(requestID == Connection.GET_FILE){
                 if(data.get("Content") != null){
+                    textArea.setEditable(false);
                     textArea.setText(data.get("Content"));
                 }
                 
+            }else if(requestID == Connection.LOCK){
+                if(data.get("Status") == "423"){
+                    System.out.println("file locked!");
+                }else{
+                    textArea.setEditable(true);
+                }
             }
 
             if(data.get("paths")!=null && !((data.get("paths")).isEmpty())){

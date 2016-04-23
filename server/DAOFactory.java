@@ -6,6 +6,7 @@ public abstract class DAOFactory {
 	public abstract UserDAO getUserDAO();
 	public abstract PathDAO getPathDAO();
 	public abstract SyncDAO getSyncDAO();
+	public abstract ModeDAO getModeDAO();
 
 	public static DAOFactory getDAOFactory(int type){
 		switch (type) {

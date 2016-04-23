@@ -22,13 +22,13 @@ public class ServerManager{
 			DBManager.getInstance().create();
 		}
 		
-		SynchronizationR syncr = new SynchronizationR();
+		/*SynchronizationR syncr = new SynchronizationR();
 		Thread synr = new Thread(syncr);
         synr.start();
 
 		Synchronization sync = new Synchronization();
 		Thread syn = new Thread(sync);
-        syn.start();
+        syn.start();*/
 
         try{
             ServerSocket serverSocket = 

@@ -347,7 +347,7 @@ public class DBManager{
 
 			// Mode table, whether it is locked, for limit edit and delete request
 			sql = "CREATE TABLE IF NOT EXISTS mode" +
-                  "(id INTEGER NOT NULL, " +
+                  "(id INTEGER NOT NULL AUTO_INCREMENT, " +
                   " path VARCHAR(255) NOT NULL, " +
                   " user_id INTEGER DEFAULT 0," +
                   " PRIMARY KEY (id))";

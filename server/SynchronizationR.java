@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class SynchronizationR implements Runnable{
 	private Socket socket;
-    
+    public static String modes = "";
     private int portNumber;
     DAOFactory cloudFactory;
     SyncDAO syncDAO;
@@ -18,6 +18,7 @@ public class SynchronizationR implements Runnable{
         
 	}
 
+
 	public void run() {
 		 try{
             ServerSocket serverSocket = new ServerSocket(this.portNumber);
@@ -28,11 +29,13 @@ public class SynchronizationR implements Runnable{
             PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
             InputStream in2 = socket.getInputStream();
             OutputStream os = socket.getOutputStream();){
+
             while(true){
-                System.out.println("rrrrrrrrrrr");
                 temp=in.readLine();
                 String[] r = temp.split(";");
-                if((r[0]).equals("1")){
+                if((r[0]).equals("10")){
+                    modes = r[2];
+                }else if((r[0]).equals("1")){
                     PathDAO pathDAO = cloudFactory.getPathDAO();
                     pathDAO.deletePath(r[2]);
                     FileManager fm = new FileManager();
@@ -65,6 +68,7 @@ public class SynchronizationR implements Runnable{
                     }
                 }
             }
+
         }catch(IOException e){
             e.printStackTrace();
         }

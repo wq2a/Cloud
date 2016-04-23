@@ -35,6 +35,7 @@ public class Connection implements Runnable{
     public final static int GET_PATH = 3;
     public final static int GET_FILE = 4;
     public final static int DELETE_PATH = 5;
+    public final static int LOCK = 6;
 
     private int requestID;
     private int tag;

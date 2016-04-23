@@ -31,6 +31,7 @@ public class Protocol {
     final static String BADREQUEST = "400";
     final static String UNAUTHORIZED = "401";
     final static String NOTFOUND = "404";
+    final static String LOCKED = "423";
 
     final static String CONNECTION = "Connection";
     final static String CLOSE = "close";
@@ -104,7 +105,7 @@ public class Protocol {
 
                     PathDAO pathDAO = cloudFactory.getPathDAO();
                     if(pathDAO.insertPath("data/"+requestMap.get("Path")) == -1){
-                    //if(DBManager.getInstance().insertPath("data/"+requestMap.get("Path")) == -1){
+                        //if(DBManager.getInstance().insertPath("data/"+requestMap.get("Path")) == -1){
                         // error
                         responseMap.put(STATUS,NOTFOUND);
                     }else{
@@ -119,15 +120,20 @@ public class Protocol {
             case DELETE:
                 // delete file on server
                 if(null!=requestMap.get("Path") && !(requestMap.get("Path")).isEmpty()){
-                    PathDAO pathDAO = cloudFactory.getPathDAO();
-                    pathDAO.deletePath("data/"+requestMap.get("Path"));
-                    //DBManager.getInstance().delPath("data/"+requestMap.get("Path"));
-                    FileManager fm = new FileManager(auth);
-                    fm.del(requestMap.get("Path"));
-                    Sync sync = new Sync("data/"+requestMap.get("Path"),0,1,1,(auth.getUser().getUsername()).hashCode());
-                    SyncDAO syncDAO = cloudFactory.getSyncDAO();
-                    syncDAO.insertSync(sync);
-                    
+                    Mode mode = new Mode("data/"+requestMap.get("Path"),auth.getUser().getUsername().hashCode());
+                    ModeDAO modeDAO = cloudFactory.getModeDAO();
+                    if(modeDAO.contains(mode) || SynchronizationR.modes.contains(requestMap.get("Path"))){
+                        responseMap.put(STATUS,LOCKED);
+                    }else{
+                        PathDAO pathDAO = cloudFactory.getPathDAO();
+                        pathDAO.deletePath("data/"+requestMap.get("Path"));
+                        //DBManager.getInstance().delPath("data/"+requestMap.get("Path"));
+                        FileManager fm = new FileManager(auth);
+                        fm.del(requestMap.get("Path"));
+                        Sync sync = new Sync("data/"+requestMap.get("Path"),0,1,1,(auth.getUser().getUsername()).hashCode());
+                        SyncDAO syncDAO = cloudFactory.getSyncDAO();
+                        syncDAO.insertSync(sync);
+                    }
                 }else{
                     // path is empty
                     responseMap.put(STATUS,NOTFOUND);
@@ -138,10 +144,26 @@ public class Protocol {
                 if(requestMap.get("Register")!=null){
                     auth.register(requestMap);
                 }
-                
+
                 break;
             default:
                 responseMap.put(STATUS,BADREQUEST);
+        }
+
+        if(requestMap.get("Path")!=null){
+            Mode mode = new Mode("data/"+requestMap.get("Path"),auth.getUser().getUsername().hashCode());
+            ModeDAO modeDAO = cloudFactory.getModeDAO();
+            if(requestMap.get("EditMode")!=null){
+                if(modeDAO.contains(mode) || SynchronizationR.modes.contains(requestMap.get("Path"))){
+                    responseMap.put(STATUS,LOCKED);
+                }else{
+                    System.out.println("insert");
+                    modeDAO.insertMode(mode);
+                }
+            } else {
+                System.out.println("remove");
+                modeDAO.deleteMode(mode);
+            }
         }
 
         if(requestMap.get(METHOD).equals(GET)||requestMap.get(METHOD).equals(PUT)||requestMap.get(METHOD).equals(DELETE)){

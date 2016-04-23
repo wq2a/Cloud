@@ -17,6 +17,7 @@ public class Synchronization implements Runnable{
     ModeDAO modeDAO;
     ArrayList<Sync> syncs;
     String modes;
+    private final static int SLEEPTIME = 5000;
 
 	public Synchronization() {
 		cloudFactory = DAOFactory.getDAOFactory(DAOFactory.DAOCLOUD);
@@ -30,7 +31,7 @@ public class Synchronization implements Runnable{
 	public void run() {
 		while(!connect()){
 			try{
-                	Thread.sleep(5000);
+                	Thread.sleep(SLEEPTIME);
         		}catch(InterruptedException ex){
         			System.err.println(ex.getMessage());
         		}
@@ -42,7 +43,7 @@ public class Synchronization implements Runnable{
 			syncs = syncDAO.selectSync();
 			if(!syncs.isEmpty()){
 				for(Sync sync:syncs){
-					System.out.println(sync.getPath());
+					//System.out.println(sync.getPath());
 					out.println(sync.getType()+";"+sync.getLength()+";"+sync.getPath());
 
 					if(sync.getType()==2 && sync.getLength()>0){
@@ -62,7 +63,7 @@ public class Synchronization implements Runnable{
 				}
 			}else{
 				try{
-                	Thread.sleep(5000);
+                	Thread.sleep(SLEEPTIME);
         		} catch(InterruptedException ex){
         			System.err.println(ex.getMessage());
         		}

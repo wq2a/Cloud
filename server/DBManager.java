@@ -385,6 +385,21 @@ public class DBManager{
 			fm = new FileManager(user);
 			fm.mkdir("");
 
+			// create an admin
+			user = new User();
+			user.setUsername("user1");
+			auth = new Auth();
+			auth.insertAdmin(user,"password");
+			fm = new FileManager(user);
+			fm.mkdir("");
+
+			user = new User();
+			user.setUsername("user2");
+			auth = new Auth();
+			auth.insertAdmin(user,"password");
+			fm = new FileManager(user);
+			fm.mkdir("");
+
 			// create a shared location
 			user = new User();
 			user.setUsername("public");

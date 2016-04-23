@@ -46,7 +46,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         upload = new JButton("upload");
         save = new JButton("save");
         logout = new JButton("logout");
-        //getfile_btn = new JButton("getfile_btn");
+        getfile_btn = new JButton("getfile_btn");
         editfile_btn = new JButton("editfile_btn");
         newfile_btn = new JButton("newfile_btn");
         newdir_btn = new JButton("newdir_btn");
@@ -88,7 +88,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         buttonpanel.add(upload);
         buttonpanel.add(save);
         buttonpanel.add(logout);
-        //buttonpanel.add(getfile_btn);
+        buttonpanel.add(getfile_btn);
         buttonpanel.add(editfile_btn);
         buttonpanel.add(newfile_btn);
         buttonpanel.add(newdir_btn);
@@ -120,7 +120,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         save.addActionListener(this);
         logout.addActionListener(this);
         newdir_btn.addActionListener(this);
-        //getfile_btn.addActionListener(this);
+        getfile_btn.addActionListener(this);
         editfile_btn.addActionListener(this);
         newfile_btn.addActionListener(this);
         delfile_btn.addActionListener(this);
@@ -205,8 +205,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                     //textArea.setEditable(true);
                 }
             }
-        } 
-        /*else if (e.getActionCommand() == "getfile_btn"){
+        } else if (e.getActionCommand() == "getfile_btn"){
             
             textArea.setEditable(false);
             Connection cnn = new Connection();
@@ -215,9 +214,8 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             cnn.setRequestProperty("Path",currentPath);
             cnn.setRequestProperty("Auth",Auth.getInstance().toString());
             request(cnn);
-            System.out.println("ppp"+currentPath);
             
-        } */
+        }
     }
 
     public void valueChanged(TreeSelectionEvent e) {

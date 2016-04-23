@@ -157,11 +157,11 @@ public class Protocol {
                 if(modeDAO.contains(mode) || SynchronizationR.modes.contains(requestMap.get("Path"))){
                     responseMap.put(STATUS,LOCKED);
                 }else{
-                    System.out.println("insert");
+                    //System.out.println("insert");
                     modeDAO.insertMode(mode);
                 }
             } else {
-                System.out.println("remove");
+                //System.out.println("remove");
                 modeDAO.deleteMode(mode);
             }
         }

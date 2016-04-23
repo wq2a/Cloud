@@ -33,8 +33,13 @@ public class SynchronizationR implements Runnable{
             while(true){
                 temp=in.readLine();
                 String[] r = temp.split(";");
-                if((r[0]).equals("10") && r.length == 3){
-                    modes = r[2];
+                if((r[0]).equals("10")){
+                    if(r.length == 3){
+                        modes = r[2];
+                    }else{
+                        modes = "";
+                    }
+                    
                 }else if((r[0]).equals("1")){
                     PathDAO pathDAO = cloudFactory.getPathDAO();
                     pathDAO.deletePath(r[2]);

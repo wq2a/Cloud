@@ -15,10 +15,14 @@ public class Auth {
     final static String SP = " ";
     private User user;
     private boolean isAuthorized;
+    DAOFactory cloudFactory;
+    UserDAO userDAO;
 
     Auth(){
         user = new User();
         isAuthorized = false;
+        cloudFactory = DAOFactory.getDAOFactory(DAOFactory.DAOCLOUD);
+        userDAO = cloudFactory.getUserDAO();
     }
 
     private String SHA_256(String str){
@@ -49,7 +53,8 @@ public class Auth {
         this.user = user;
     }
     public void searchUser(){
-        user = DBManager.getInstance().searchUser(user);
+        //user = DBManager.getInstance().searchUser(user);
+        user = userDAO.findUser(user);
     }
     // for fetch user info from database
     public User getUser(){
@@ -60,14 +65,27 @@ public class Auth {
         setUser(user);
         user.setSalt(Random());
         user.setH2(SHA_256(user.getSalt()+user.getH1()));
-        DBManager.getInstance().insertUser(user);
+        //DBManager.getInstance().insertUser(user);
+        if(userDAO.insertUser(user)){
+            PathDAO pathDAO = cloudFactory.getPathDAO();
+            pathDAO.insertPath("data/"+user.getUsername()+"/");
+            FileManager fm = new FileManager(user);
+            fm.mkdir("");
+        }
+        
     }
     // admin for test
     public void insertAdmin(User user,String pass){
         setUser(user);
         user.setSalt(Random());
         user.setH2(SHA_256(user.getSalt()+SHA_256(user.getUsername()+pass)));
-        DBManager.getInstance().insertUser(user);
+        //DBManager.getInstance().insertUser(user);
+        if(userDAO.insertUser(user)){
+            PathDAO pathDAO = cloudFactory.getPathDAO();
+            pathDAO.insertPath("data/"+user.getUsername()+"/");
+            FileManager fm = new FileManager(user);
+            fm.mkdir("");
+        }
     }
 
     public boolean isAuthorized(HashMap<String,String> requestMap){

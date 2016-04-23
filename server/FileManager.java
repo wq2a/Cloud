@@ -41,6 +41,11 @@ public class FileManager{
 		return fo.mkdirs();
 	}
 
+	public boolean mkdirAB(String path){
+		fo = new File(path);
+		return fo.mkdirs();
+	}
+
 	public boolean mkdirROOT(){
 		fo = new File(ROOTDIR);
 		return fo.mkdirs();
@@ -48,6 +53,26 @@ public class FileManager{
 
 	public boolean mkfile(String relativePath,String content) throws Exception{
 		File targetFile = new File(aPath(relativePath));
+		File parent = targetFile.getParentFile();
+		if(!parent.exists()){
+			parent.mkdirs();
+    		//throw new IllegalStateException("Couldn't create dir: " + parent);
+		}
+
+		// if file doesnt exists, then create it
+		if (!targetFile.exists()) {
+			targetFile.createNewFile();
+		}
+
+		FileWriter fw = new FileWriter(targetFile.getAbsoluteFile());
+		BufferedWriter bw = new BufferedWriter(fw);
+		bw.write(content);
+		bw.close();
+		return true;
+	}
+
+	public boolean mkfileAB(String path,String content) throws Exception{
+		File targetFile = new File(path);
 		File parent = targetFile.getParentFile();
 		if(!parent.exists()){
 			parent.mkdirs();
@@ -120,6 +145,19 @@ public class FileManager{
 	public byte[] getContent(String path) {
 		try{
 			File fo = new File(home.toString()+path);
+        	byte[] mybytearray = new byte[(int) fo.length()];
+        	BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
+        	bis.read(mybytearray, 0, mybytearray.length);
+        	return mybytearray;
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+
+	public byte[] getContentAB(String path) {
+		try{
+			File fo = new File(path);
         	byte[] mybytearray = new byte[(int) fo.length()];
         	BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
         	bis.read(mybytearray, 0, mybytearray.length);

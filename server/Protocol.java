@@ -49,6 +49,8 @@ public class Protocol {
 
     private Auth auth;
 
+    DAOFactory cloudFactory;
+
     Protocol(){
         responseMap = new HashMap<String,String>();
         requestMap = new HashMap<String,String>();
@@ -56,6 +58,7 @@ public class Protocol {
         isClosed = false;
         auth = new Auth();
         bytes = new byte[0];
+        cloudFactory = DAOFactory.getDAOFactory(DAOFactory.DAOCLOUD);
     }
 
     private String generator(){
@@ -98,22 +101,32 @@ public class Protocol {
             case PUT:
                 this.bytes = bytes;
                 if(null!=requestMap.get("Path")){
-                    
-                    if(DBManager.getInstance().insertPath("data/"+requestMap.get("Path")) == -1){
+
+                    PathDAO pathDAO = cloudFactory.getPathDAO();
+                    if(pathDAO.insertPath("data/"+requestMap.get("Path")) == -1){
+                    //if(DBManager.getInstance().insertPath("data/"+requestMap.get("Path")) == -1){
                         // error
                         responseMap.put(STATUS,NOTFOUND);
                     }else{
                         writeToFile = true;
+                        Sync sync = new Sync("data/"+requestMap.get("Path"),bytes.length,2,1,(auth.getUser().getUsername()).hashCode());
+                        SyncDAO syncDAO = cloudFactory.getSyncDAO();
+                        syncDAO.insertSync(sync);
+                        
                     }
                 }
                 break;
             case DELETE:
                 // delete file on server
                 if(null!=requestMap.get("Path") && !(requestMap.get("Path")).isEmpty()){
-
-                    DBManager.getInstance().delPath("data/"+requestMap.get("Path"));
+                    PathDAO pathDAO = cloudFactory.getPathDAO();
+                    pathDAO.deletePath("data/"+requestMap.get("Path"));
+                    //DBManager.getInstance().delPath("data/"+requestMap.get("Path"));
                     FileManager fm = new FileManager(auth);
                     fm.del(requestMap.get("Path"));
+                    Sync sync = new Sync("data/"+requestMap.get("Path"),0,1,1,(auth.getUser().getUsername()).hashCode());
+                    SyncDAO syncDAO = cloudFactory.getSyncDAO();
+                    syncDAO.insertSync(sync);
                     
                 }else{
                     // path is empty
@@ -132,8 +145,11 @@ public class Protocol {
         }
 
         if(requestMap.get(METHOD).equals(GET)||requestMap.get(METHOD).equals(PUT)||requestMap.get(METHOD).equals(DELETE)){
-            responseMap.put("private", DBManager.getInstance().getPath("data/"+auth.getUser().getUsername()+"/"));
-            responseMap.put("public", DBManager.getInstance().getPath("data/public/"));
+            PathDAO pathDAO = cloudFactory.getPathDAO();
+            responseMap.put("private", pathDAO.getPaths("data/"+auth.getUser().getUsername()+"/"));
+            responseMap.put("public", pathDAO.getPaths("data/public/"));
+            //responseMap.put("private", DBManager.getInstance().getPath("data/"+auth.getUser().getUsername()+"/"));
+            //responseMap.put("public", DBManager.getInstance().getPath("data/public/"));
         }
 
         if(requestMap.get(CONNECTION)!=null&&requestMap.get(CONNECTION).equals(CLOSE)){
@@ -180,6 +196,8 @@ public class Protocol {
             } catch(Exception e){
                 System.err.println(e.getMessage());
             }
+
+            
         }
     }
 

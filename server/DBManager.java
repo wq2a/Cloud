@@ -6,7 +6,7 @@ import java.io.*;
 import cloud.server.User;
 import cloud.server.FileManager;
 
-
+// 
 public class DBManager{
 
 	private static DBManager instance;
@@ -90,20 +90,6 @@ public class DBManager{
       		//Handle errors for Class.forName
       		e.printStackTrace();
    		}finally{
-      		//finally block used to close resources
-      		/*
-      		try{
-         		if(stmt!=null)
-            		conn.close();
-      		}catch(SQLException se){
-      		}
-      		try{
-         		if(conn!=null)
-            		conn.close();
-      		}catch(SQLException se){
-         		se.printStackTrace();
-     		}
-     		conn = null;*/
      		return true;
    		}
    		
@@ -210,6 +196,14 @@ public class DBManager{
    		}
 	}
 
+	public void lock(){
+
+	}
+
+	public void unlock(){
+
+	}
+	
 	public int insertPath(String path){
 		int id = -1;
 		int parent = -1;
@@ -308,13 +302,17 @@ public class DBManager{
 
 	public void create(){
 		try{
+			//conn = DriverManager.getConnection("jdbc:mysql://localhost/?useSSL=false",USER,PASSWORD);
+			//stmt = conn.createStatement();
 			conn = DriverManager.getConnection("jdbc:mysql://localhost/?useSSL=false",USER,PASSWORD);
 			stmt = conn.createStatement();
 			String sql = "CREATE DATABASE IF NOT EXISTS cloud";
 			stmt.executeUpdate(sql);
 			conn.close();
 			conn = null;
+
 			stmt = getConnection().createStatement();
+			
 			// User table
 			sql = "CREATE TABLE IF NOT EXISTS user" +
                   //"(id INTEGER not NULL AUTO_INCREMENT, " +
@@ -325,6 +323,7 @@ public class DBManager{
                   " firstname VARCHAR(255), " +
                   " lastname VARCHAR(255), " +
                   " email VARCHAR(255), " +
+                  " createtime TIMESTAMP DEFAULT CURRENT_TIMESTAMP," + 
                   " PRIMARY KEY ( id ))";
 			stmt.executeUpdate(sql);
 
@@ -336,7 +335,7 @@ public class DBManager{
                   " parent INTEGER NOT NULL, " +
                   " path VARCHAR(255) NOT NULL, " +
                   " type INTEGER NOT NULL DEFAULT 0, " +
-                  " editmode INTEGER DEFAULT 0, " +
+                  //" editmode INTEGER DEFAULT 0, " +
                   " PRIMARY KEY ( id ))";
 			stmt.executeUpdate(sql);
 			sql = "CREATE TABLE IF NOT EXISTS path_closure" +
@@ -345,6 +344,26 @@ public class DBManager{
                   " depth INTEGER NOT NULL DEFAULT 0, " +
                   " PRIMARY KEY ( ancestor,descendant ))";
 			stmt.executeUpdate(sql);
+
+			// Mode table, whether it is locked, for limit edit and delete request
+			sql = "CREATE TABLE IF NOT EXISTS mode" +
+                  "(id INTEGER NOT NULL, " +
+                  " path VARCHAR(255) NOT NULL, " +
+                  " user_id INTEGER DEFAULT 0," +
+                  " PRIMARY KEY (id))";
+			stmt.executeUpdate(sql);
+
+			// File sync table, type -1 means already synchronized 
+			sql = "CREATE TABLE IF NOT EXISTS file_sync" +
+                  "(sync_id INTEGER NOT NULL AUTO_INCREMENT, " +
+                  " path VARCHAR(255) NOT NULL, " +
+                  " length INTEGER NOT NULL DEFAULT 0, " +
+                  " type INTEGER NOT NULL DEFAULT -1, " +
+                  " sync_type INTEGER NOT NULL DEFAULT 0, " +
+                  " user_id INTEGER DEFAULT 0, " +
+                  " timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP," + 
+                  " PRIMARY KEY ( sync_id ))";
+			stmt.executeUpdate(sql);
 			
 			insertPath("data/");
 			
@@ -352,10 +371,16 @@ public class DBManager{
 			FileManager fm = new FileManager();
 			fm.mkdirROOT();
 
-			// create an admin
+			// create an server
 			User user = new User();
-			user.setUsername("admin");
+			user.setUsername("server");
 			Auth auth = new Auth();
+			auth.insertAdmin(user,"password");
+
+			// create an admin
+			user = new User();
+			user.setUsername("admin");
+			auth = new Auth();
 			auth.insertAdmin(user,"password");
 			fm = new FileManager(user);
 			fm.mkdir("");

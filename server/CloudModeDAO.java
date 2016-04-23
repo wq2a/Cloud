@@ -55,10 +55,10 @@ public class CloudModeDAO implements ModeDAO {
 			if(mode.getUser_id()!=0){
 				sql = "DELETE from mode WHERE user_id="+ mode.getUser_id();
 				stmt.executeUpdate(sql);
-			}else{
-				sql = "DELETE from mode WHERE path='"+ mode.getPath()+"'";
-				stmt.executeUpdate(sql);
 			}
+			sql = "DELETE from mode WHERE path='"+ mode.getPath()+"'";
+			stmt.executeUpdate(sql);
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}

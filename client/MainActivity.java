@@ -342,8 +342,9 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                 }
                 
             }else if(requestID == Connection.LOCK){
-                if(data.get("Status") == "423"){
+                if(data.get("Status").equals("423")){
                     System.out.println("file locked!");
+                    textArea.setEditable(false);
                 }else{
                     textArea.setEditable(true);
                 }

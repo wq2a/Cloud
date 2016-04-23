@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-public class Synchronization implements Runnable{
+public class Locker implements Runnable{
 	private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
@@ -14,15 +14,12 @@ public class Synchronization implements Runnable{
     private int portNumber;
     DAOFactory cloudFactory;
     SyncDAO syncDAO;
-    ModeDAO modeDAO;
     ArrayList<Sync> syncs;
-    String modes;
 
 	public Synchronization() {
 		cloudFactory = DAOFactory.getDAOFactory(DAOFactory.DAOCLOUD);
 		syncDAO = cloudFactory.getSyncDAO();
-        modeDAO = cloudFactory.getModeDAO();
-		hostName = "52.87.188.170";//"54.165.222.100";
+		hostName = "localhost";//"52.87.188.170";
         portNumber = 9901;
         request = new StringBuffer();
 	}
@@ -36,9 +33,6 @@ public class Synchronization implements Runnable{
         		}
 		}
 		while(true){
-            modes = modeDAO.getModes();
-            out.println(10+";"+0+";"+modes);
-
 			syncs = syncDAO.selectSync();
 			if(!syncs.isEmpty()){
 				for(Sync sync:syncs){

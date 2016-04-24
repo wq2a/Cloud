@@ -34,11 +34,12 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
     private ArrayList<String> nodePaths;
     FileNode foinit;
     private String currentPath = "";
+    private boolean file_get_locker = false;
 
-    ImageIcon saveImage = createImageIcon("../../resources/save.png");
-    ImageIcon logoutImage = createImageIcon("../../resources/close.png");
-    ImageIcon deleteImage = createImageIcon("../../resources/delete.png");
-    ImageIcon editImage = createImageIcon("../../resources/edit.png");
+    ImageIcon saveImage = createImageIcon("resources/save.png");
+    ImageIcon logoutImage = createImageIcon("resources/close.png");
+    ImageIcon deleteImage = createImageIcon("resources/delete.png");
+    ImageIcon editImage = createImageIcon("resources/edit.png");
     
     
 
@@ -292,8 +293,8 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
 
     @Override
     public void mouseClicked(MouseEvent e) {
-       
-        if(e.getClickCount() == 1 || e.getClickCount() == 2){
+       // || e.getClickCount() == 2
+        if(e.getClickCount() == 1){
             TreePath path = tree.getPathForLocation(e.getX(), e.getY());
             if (path != null) {
                 //System.out.println(path.getLastPathComponent());
@@ -302,16 +303,21 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                     currentPath = "";
                     return;
                 } else {
+
                     currentPath = node.getP();
                 
                     if(node.getFileType() == 1){
-                        textArea.setEditable(false);
-                        Connection cnn = new Connection();
-                        cnn.setRequestMethod(Connection.GET_FILE,"GET");
-                        cnn.setRequestProperty("File","");
-                        cnn.setRequestProperty("Path",currentPath);
-                        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-                        request(cnn);
+                        if(!file_get_locker){
+                            file_get_locker = true;
+
+                            textArea.setEditable(false);
+                            Connection cnn = new Connection();
+                            cnn.setRequestMethod(Connection.GET_FILE,"GET");
+                            cnn.setRequestProperty("File","");
+                            cnn.setRequestProperty("Path",currentPath);
+                            cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                            request(cnn);
+                        }
                     }else{
                         textArea.setText("");
                     }
@@ -361,7 +367,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
     private boolean ii = false;
     // receive data which need to display, in UI thread
     public void receive(int requestID,int tag,HashMap<String,String> data){
-        
+        file_get_locker = false;
         if(data != null){
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
             if(data.get("Status").equals("200")){
@@ -371,6 +377,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             }
             
             if(requestID == Connection.GET_FILE){
+                
                 if(data.get("Content") != null){
                     textArea.setEditable(false);
                     textArea.setText(data.get("Content"));

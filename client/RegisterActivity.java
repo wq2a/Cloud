@@ -32,6 +32,7 @@ public class RegisterActivity extends Base {
         JPanel idpanel = new JPanel(gl2);
         id = new JLabel("New Username", JLabel.CENTER);
         username = new JTextField("",JTextField.CENTER);
+
         idpanel.add(id);
         idpanel.add(username);
         idpanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

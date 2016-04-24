@@ -43,6 +43,7 @@ public class LoginActivity extends Base {
         JPanel idpanel = new JPanel(gl2);
         id = new JLabel("ID", JLabel.CENTER);
         username = new JTextField("",JTextField.CENTER);
+
         idpanel.add(id);
         idpanel.add(username);
         idpanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -58,16 +59,16 @@ public class LoginActivity extends Base {
         main.add(pwpanel);
         
         loginbtn = new JButton("login");
-        loginbtn.setIcon(loginImage);
+        //loginbtn.setIcon(loginImage);
         loginbtn.setActionCommand("login");
-        loginbtn.setBorder(BorderFactory.createEmptyBorder());
-        loginbtn.setText("");
+        //loginbtn.setBorder(BorderFactory.createEmptyBorder());
+        //loginbtn.setText("");
 
         registerbtn = new JButton("register");
-        registerbtn.setIcon(registerImage);
+        //registerbtn.setIcon(registerImage);
         registerbtn.setActionCommand("register");
-        registerbtn.setBorder(BorderFactory.createEmptyBorder());
-        registerbtn.setText("");
+        //registerbtn.setBorder(BorderFactory.createEmptyBorder());
+        //registerbtn.setText("");
 
         JPanel button = new JPanel(gl2);
         button.add(loginbtn);

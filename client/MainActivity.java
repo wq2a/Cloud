@@ -59,10 +59,10 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         save.setActionCommand("save");
         
         logout = new JButton("logout");
-        logout.setIcon(logoutImage);
+        //logout.setIcon(logoutImage);
         logout.setActionCommand("logout");
-        logout.setBorder(BorderFactory.createEmptyBorder());
-        logout.setText("");
+        //logout.setBorder(BorderFactory.createEmptyBorder());
+        //logout.setText("");
         
         editfile_btn = new JButton("Edit");
         editfile_btn.setActionCommand("editfile_btn");
@@ -73,11 +73,11 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         newdir_btn = new JButton("New Dir");
         newdir_btn.setActionCommand("newdir_btn");
 
-        delfile_btn = new JButton("delfile_btn");
-        delfile_btn.setIcon(deleteImage);
+        delfile_btn = new JButton("Delete");
+        //delfile_btn.setIcon(deleteImage);
         delfile_btn.setActionCommand("delfile_btn");
-        delfile_btn.setBorder(BorderFactory.createEmptyBorder());
-        delfile_btn.setText("");
+        //delfile_btn.setBorder(BorderFactory.createEmptyBorder());
+        //delfile_btn.setText("");
 
         refreshbtn = new JButton("Refresh");
         refreshbtn.setActionCommand("refreshbtn");
@@ -101,10 +101,14 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         JScrollPane treePanel = new JScrollPane(tree);
 
+        //treePanel.setPreferredSize(new Dimension(200, (int)(Config.SCREENDIM.height*0.6)));
         treePanel.setPreferredSize(new Dimension(200, (int)(Config.SCREENDIM.height*0.6)));
+        treePanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         myPanel.add(treePanel); 
 
         textArea = new JTextArea(30,35);
+        //textArea.setPreferredSize(new Dimension(200, (int)(Config.SCREENDIM.height*0.6)));
+        textArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         textArea.setEditable(false);
 
         textArea.append("");
@@ -113,15 +117,16 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         main.add(new JScrollPane(textArea),BorderLayout.CENTER); 
 
         JPanel buttonpanel = new JPanel(new GridLayout(0, 10));
+        buttonpanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         //buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
         //buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
-        JPanel buttonpanelsub = new JPanel(new GridLayout(0, 4));
-        buttonpanelsub.add(delfile_btn);
-        buttonpanel.add(buttonpanelsub);
+        //JPanel buttonpanelsub = new JPanel(new GridLayout(0, 2));
+        buttonpanel.add(delfile_btn);
+        //buttonpanel.add(buttonpanelsub);
 
-        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
-        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
-        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        //buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        //buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        //buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
         buttonpanel.add(newfile_btn);
         buttonpanel.add(newdir_btn);
         buttonpanel.add(refreshbtn);
@@ -147,9 +152,9 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         logpanel.add(Box.createRigidArea(new Dimension(1,0)));
         logpanel.add(log);
         logpanel.add(Box.createRigidArea(new Dimension(1,0)));
-        JPanel logpanelsub = new JPanel(new GridLayout(0, 4));
-        logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
-        logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
+        JPanel logpanelsub = new JPanel(new GridLayout(0, 2));
+        //logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
+        //logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
         logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
         logpanelsub.add(logout);
         logpanel.add(logpanelsub);
@@ -302,6 +307,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                     Connection cnn = new Connection();
                     cnn.setRequestMethod(Connection.LOCK,"POST");
                     cnn.setRequestProperty("EditMode","");
+                    System.out.println("Send lock");
                     cnn.setRequestProperty("Path",currentPath);
                     cnn.setRequestProperty("Auth",Auth.getInstance().toString());
                     request(cnn);
@@ -428,6 +434,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                 }
                 
             }else if(requestID == Connection.LOCK){
+                //System.out.println("Send lock"+data.get("Status"));
                 if(data.get("Status").equals("423")){
                     // file locked
                     log.setText(Utils.warning("== File Locked =="));

@@ -20,6 +20,9 @@ public class LoginActivity extends Base {
     private JComboBox<String> serverList;
     private GridLayout gl,gl2;
 
+    ImageIcon loginImage = createImageIcon("resources/login.png");
+    ImageIcon registerImage = createImageIcon("resources/register.png");
+
     // init the view layout here
     private void setLayout(){
 		gl = new GridLayout(5, 0);
@@ -55,7 +58,17 @@ public class LoginActivity extends Base {
         main.add(pwpanel);
         
         loginbtn = new JButton("login");
+        loginbtn.setIcon(loginImage);
+        loginbtn.setActionCommand("login");
+        loginbtn.setBorder(BorderFactory.createEmptyBorder());
+        loginbtn.setText("");
+
         registerbtn = new JButton("register");
+        registerbtn.setIcon(registerImage);
+        registerbtn.setActionCommand("register");
+        registerbtn.setBorder(BorderFactory.createEmptyBorder());
+        registerbtn.setText("");
+
         JPanel button = new JPanel(gl2);
         button.add(loginbtn);
         button.add(registerbtn);
@@ -142,4 +155,15 @@ public class LoginActivity extends Base {
 		}
         
 	}
+
+    /** Returns an ImageIcon, or null if the path was invalid. */
+    protected static ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = LoginActivity.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            //System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
 }

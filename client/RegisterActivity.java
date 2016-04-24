@@ -16,6 +16,8 @@ public class RegisterActivity extends Base {
     private GridLayout gl, gl2;
     private boolean lock = false;
 
+    ImageIcon registerImage = createImageIcon("resources/register.png");
+
     // init the view layout here
     private void setLayout(){
 		
@@ -53,11 +55,14 @@ public class RegisterActivity extends Base {
 
         registerbtn = new JButton("Register");
         cancelbtn = new JButton("Cancel");
-    	registerbtn.addActionListener(this);
-        cancelbtn.addActionListener(this);
 
         JPanel button = new JPanel(gl2);
         button.add(registerbtn);
+        registerbtn.setIcon(registerImage);
+        registerbtn.setActionCommand("Register");
+        registerbtn.setBorder(BorderFactory.createEmptyBorder());
+        registerbtn.setText("");
+
         button.add(cancelbtn);
         button.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         main.add(button);
@@ -141,4 +146,15 @@ public class RegisterActivity extends Base {
         lock = false;
         
 	}
+
+        /** Returns an ImageIcon, or null if the path was invalid. */
+    protected static ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = RegisterActivity.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            //System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
 }

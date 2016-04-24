@@ -137,12 +137,24 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         main.add(buttonpanel,BorderLayout.SOUTH);//BorderLayout.PAGE_END
 
         JPanel logpanel = new JPanel();
-        logpanel.setLayout(new BorderLayout());
+        
+        logpanel.setLayout(new GridLayout(0, 5));
+        //logpanel.setLayout(new BorderLayout());
         logpanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         //logpanel.add(newfile_btn,BorderLayout.WEST);
         //logpanel.add(newdir_btn,BorderLayout.CENTER);
-        logpanel.add(log,BorderLayout.CENTER);
-        logpanel.add(logout,BorderLayout.EAST);
+        logpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        logpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        logpanel.add(log);
+        logpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        JPanel logpanelsub = new JPanel(new GridLayout(0, 4));
+        logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
+        logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
+        logpanelsub.add(Box.createRigidArea(new Dimension(1,0)));
+        logpanelsub.add(logout);
+        logpanel.add(logpanelsub);
+        //logpanel.add(log,BorderLayout.CENTER);
+        //logpanel.add(logout,BorderLayout.EAST);
 
         main.add(logpanel,BorderLayout.PAGE_START);
 
@@ -202,8 +214,16 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             }
 
         } else if (e.getActionCommand() == "logout") {
+            JFrame frame = new JFrame();
+            int n = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Are you sureadmin quit the program?",
+                    "Logout Confirm",
+                    JOptionPane.OK_CANCEL_OPTION);
 
-            exit();
+            if(n==0){
+                exit();
+            }
 
         } else if (e.getActionCommand() == "save"){
             if(textArea.isEditable()){
@@ -220,36 +240,59 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             if(currentPath.isEmpty()){
                 log.setText(Utils.warning("Please select a directory."));
             }else{
-                Random rand = new Random();
-                int  n = rand.nextInt(500) + 1;
-                Connection cnn = new Connection();
-                cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
-                cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-                cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_file.txt");
-                request(cnn);
+                JFrame frame = new JFrame();
+                String result = JOptionPane.showInputDialog(frame, "Enter New File Name:");  
+                if(result!=null&&!result.isEmpty()){
+                    //Random rand = new Random();
+                    //int  n = rand.nextInt(500) + 1;
+                    Connection cnn = new Connection();
+                    cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+                    cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                    cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+result);
+                    //cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_file.txt");
+                    request(cnn);
+                }
+                
             }
         } else if (e.getActionCommand() == "newdir_btn"){
             if(currentPath.isEmpty()){
                 log.setText(Utils.warning("Please select a directory."));
             }else{
-                 Random rand = new Random();
-                int  n = rand.nextInt(500) + 1;
-                Connection cnn = new Connection();
-                cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
-                cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-                cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_dir/");
-                request(cnn);
+                JFrame frame = new JFrame();
+                String result = JOptionPane.showInputDialog(frame, "Enter New Directory Name:"); 
+                if(result!=null&&!result.isEmpty()){
+                    
+                    //Random rand = new Random();
+                    //int  n = rand.nextInt(500) + 1;
+                    Connection cnn = new Connection();
+                    cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+                    cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                    cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+result+"/");
+                    //cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_dir/");
+                    request(cnn);
+                    log.setText(Utils.warning(""));
+                    
+                }
+                
             }
            
         } else if (e.getActionCommand() == "delfile_btn"){
             if(currentPath.isEmpty()){
                 log.setText(Utils.warning("Please select a file or a directory."));
             }else{
-                Connection cnn = new Connection();
-                cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
-                cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-                cnn.setRequestProperty("Path",currentPath);
-                request(cnn);
+                JFrame frame = new JFrame();
+                int n = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Are you sure delete "+currentPath+"?",
+                    "Delete Confirm",
+                    JOptionPane.OK_CANCEL_OPTION);
+                if(n==0){
+                    Connection cnn = new Connection();
+                    cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
+                    cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                    cnn.setRequestProperty("Path",currentPath);
+                    request(cnn);
+                }
             }
         } 
         else if (e.getActionCommand() == "editfile_btn"){
@@ -379,6 +422,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             if(requestID == Connection.GET_FILE){
                 
                 if(data.get("Content") != null){
+                    log.setText(Utils.info("== Standard Mode =="));
                     textArea.setEditable(false);
                     textArea.setText(data.get("Content"));
                 }
@@ -386,8 +430,10 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             }else if(requestID == Connection.LOCK){
                 if(data.get("Status").equals("423")){
                     // file locked
+                    log.setText(Utils.warning("== File Locked =="));
                     textArea.setEditable(false);
                 }else{
+                    log.setText(Utils.info("== Edit Mode =="));
                     textArea.setEditable(true);
                 }
             }else if(requestID == Connection.DELETE_PATH){
@@ -464,7 +510,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         
     }
 
-       /** Returns an ImageIcon, or null if the path was invalid. */
+    /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = MainActivity.class.getResource(path);
         if (imgURL != null) {

@@ -15,6 +15,6 @@ client:	client/*.java
 	jar cvfe client.jar cloud.client.Client cloud/client
 
 clean:
-	sudo rm -rf cloud
+	sudo rm -rf cloud client.jar
 
 .PHONY: all server client clean

@@ -106,7 +106,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         textArea = new JTextArea(30,35);
         textArea.setEditable(false);
 
-        textArea.append("Printout Contents");
+        textArea.append("");
 
         main.add(myPanel,BorderLayout.WEST);//BorderLayout.LINE_START
         main.add(new JScrollPane(textArea),BorderLayout.CENTER); 

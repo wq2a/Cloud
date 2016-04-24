@@ -158,9 +158,16 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             }
 
         } else if (e.getSource() == logout) {
+        	JFrame frame = new JFrame();
+        	int n = JOptionPane.showConfirmDialog(
+        		    frame,
+        		    "Are you sureadmin quit the program?",
+        		    "Logout Confirm",
+        		    JOptionPane.OK_CANCEL_OPTION);
+        	if(n==0){
 
             exit();
-
+        	}
         } else if (e.getSource() == save){
         	Connection cnn = new Connection();
             cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
@@ -195,11 +202,13 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         		    "Are you sure delete the file/directory?",
         		    "Delete Confirm",
         		    JOptionPane.OK_CANCEL_OPTION);
+        	if(n==0){
         	Connection cnn = new Connection();
             cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
             cnn.setRequestProperty("Auth",Auth.getInstance().toString());
             cnn.setRequestProperty("Path",currentPath);
             request(cnn);
+        	}
         } else if (e.getSource() == editfile_btn){
             // get lock
         	log.setText("== Edit Mode ==");

@@ -17,7 +17,7 @@ public class Synchronization implements Runnable{
     ModeDAO modeDAO;
     ArrayList<Sync> syncs;
     String modes;
-    private final static int SLEEPTIME = 5000;
+    private final static int SLEEPTIME = 3000;
 
 	public Synchronization() {
 		cloudFactory = DAOFactory.getDAOFactory(DAOFactory.DAOCLOUD);

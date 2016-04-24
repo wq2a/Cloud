@@ -9,16 +9,25 @@ public class ClientSocket{
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private InputStream in2;
     private StringBuffer response;
 
     private String hostName;
     private int portNumber;
 
+    private String code;
+
     ClientSocket(){
         hostName = "localhost";
-        portNumber = 9900;
+//        hostName = "52.87.188.170";
+    	portNumber = 9900;
         response = new StringBuffer();
+        code = Utils.Random();
         connect();
+    }
+
+    public String getCode(){
+        return code;
     }
 
     private void connect(){
@@ -26,7 +35,8 @@ public class ClientSocket{
             socket = new Socket(hostName,portNumber);
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            //System.out.println("established");
+            in2 = socket.getInputStream();
+            // System.out.println("established");
         } catch (UnknownHostException e) {
             System.err.println("Host unknown. Cannot establish connection");
         } catch (IOException e) {
@@ -40,7 +50,7 @@ public class ClientSocket{
         return instance;
     }
 
-    public String getResponse(String request,FileManager fm){
+    public String getResponse(int requestID,String request,FileManager fm){
         if(socket == null)
             connect();
         try{
@@ -50,12 +60,12 @@ public class ClientSocket{
             out.println(request);
 
             if(fm != null){
-                File fo = new File(fm.aPath(fm.getP()));
-                byte[] mybytearray = new byte[(int) fo.length()];
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fo));
-                bis.read(mybytearray, 0, mybytearray.length);
+                byte[] mybytearray = fm.getContent();
                 OutputStream os = socket.getOutputStream();
-                os.write(mybytearray, 0, mybytearray.length);
+                // wait until server is ready
+                if(in.readLine() != null){
+                    os.write(mybytearray, 0, mybytearray.length);
+                }
             }
 
             while((fromServer = in.readLine()) != null){
@@ -63,10 +73,28 @@ public class ClientSocket{
                     break;
                 response.append(fromServer+CRLF);
             }
+
+            if(!code.equals(instance.getCode())&&requestID!=Connection.GET_FILE){
+                disconnect();
+            }
         }catch(Exception e){
             System.err.println("Cannot establish connection. Server may not be up."+e.getMessage());
         }
         return response.toString();
+    }
+
+    public String getFile(int length) throws Exception{
+        byte[] bytes = new byte[0];
+
+        if(length > 0){
+            bytes = new byte[length];
+            int count = 0;
+            out.println("ok");
+            while((count+=in2.read(bytes)) < length){
+            }
+        }
+        disconnect();
+        return new String(bytes,"UTF-8");
     }
 
     public void disconnect(){

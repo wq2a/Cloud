@@ -1,9 +1,11 @@
 package cloud.client;
 
 public class Info{
+	
 	public static Info instance;
 	private String os;
 	private String language;
+
 	private Info(){
 		os = System.getProperty("os.name");
 		language = System.getProperty("user.language");

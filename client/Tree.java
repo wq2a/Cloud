@@ -8,51 +8,70 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 public class Tree extends JPanel{
-    TreeArea TreeArea;
+    TreeArea treeArea;
     JTextArea textArea;
+    FileNode fo;
     final static String newline = "\n";
     
-    public Tree() {
+    
+    public Tree(TreeNode nodeTree) {
         super(new GridLayout(1,2,1,2));
-        TreeArea = new TreeArea();
-        add(TreeArea);
+        treeArea = new TreeArea(nodeTree);
+        add(treeArea);
         textArea = new JTextArea(30,35);
         textArea.setEditable(false);
         textArea.append("Printout Contents");
         add(new JScrollPane(textArea)); 
     }
+
+
     class TreeArea extends JScrollPane implements TreeSelectionListener{
+
         JTree tree;     
-        public TreeArea() {
-            TreeNode NodeTree = createNodes();
+        public TreeArea(TreeNode nodeTree) {
+            //TreeNode NodeTree = createNodes();
 //            TreeNode NodeTree = AddNode("Root");
-            tree = new JTree(NodeTree);
+            tree = new JTree(nodeTree);
+            tree.setCellRenderer(new FileTreeCellRenderer());
+            tree.expandRow(0);
+            tree.setRootVisible(false);
             tree.addTreeSelectionListener(this);
             setViewportView(tree);
         }
+        public void setTreeSelectionListener(TreeSelectionListener tslistener){
+            tree.addTreeSelectionListener(tslistener);
+        }
+        /*
         private TreeNode createNodes() {
-            FileObject test = new FileObject("Root");
-        	String database ="first/second/third;first/second_2/third/gg;first_2/second/third;first/second_2/third/uu";
+            fo = new FileObject("");
+        	String database = "admin/;admin/;admin/;admin/data_new.txt;admin/data2.txt;public/aaa/";
             String[] paths = database.split(";");
             for(int i = 0 ; i<paths.length ; i++){
-          	  	test.AddPath(paths[i].split("/"));
+
+          	  	fo.AddPath(paths[i].split("/"),paths[i]);
             }
-      	  	return test;
-        }
-        private void addNewFile(String newnodename){
+      	  	return fo;
+        }*/
+
+        
+        /*private void addNewFile(String newnodename){
         	FileObject node = (FileObject) tree.getLastSelectedPathComponent();        	
         	String path[] = { newnodename };
         	node.AddPath(path);
-        }
+        }*/
+
+
         
         // Tree Selection Event
+        
         public void valueChanged(TreeSelectionEvent e) {
-        	FileObject node = (FileObject) tree.getLastSelectedPathComponent();        	
+        	FileNode node = (FileNode) tree.getLastSelectedPathComponent();        	
         	 if (node == null) return;
-        	 else if(node.isLeaf()){
+        	 else if(node.isLeaf() && node.getFileType()==1){
+
         		 textArea.setText(node.getNodeName());        		 
         	 }
-        }        
+        }
     }
 
     public void AddtoTextArea(String contents){
@@ -60,6 +79,6 @@ public class Tree extends JPanel{
     }
     
     public void AddtoNewFile(String newnodename){
-    	TreeArea.addNewFile(newnodename);
+    	//TreeArea.addNewFile(newnodename);
     }
 }

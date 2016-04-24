@@ -9,7 +9,6 @@ public class RegisterActivity extends Base {
 
     /* add more Request ID here 
 	   ...
-
     */
 
     // views
@@ -68,7 +67,7 @@ public class RegisterActivity extends Base {
         main.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));              
 
         JPanel logpanel = new JPanel(new GridLayout(1,1));
-        log = new JLabel("log label");
+        log = new JLabel("");
         logpanel.add(log);
         logpanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));              
         main.add(logpanel);        
@@ -99,18 +98,40 @@ public class RegisterActivity extends Base {
 	public void actionPerformed(ActionEvent e) {
         log.setText(e.getActionCommand());
         if(e.getActionCommand() == "Register") {
-        	test();
+			if(username.getText().equals("")){
+        		log.setText("Invalid Username!!");
+        	}
+			else if(!password.getPassword().equals(cfpassword.getPassword())){
+        		log.setText("Password is different");
+			}
+        	else{
+        	//test();
+            Auth auth = Auth.getInstance();
+            Connection cnn = new Connection();
+            /*
+            String username = "example";
+            String password = "password";
+            */
+            //auth.setAccount(username,password);
+//            auth.setAccount(username.getText(), password.getPassword());
+            // these three are optional
+            cnn.setRequestProperty("Email","wq2a@mtmail.mtsu.edu");
+            cnn.setRequestProperty("First","FFF");
+            cnn.setRequestProperty("Last","LLL");
 
+            cnn.setRequestProperty("Auth",auth.toString());
+            cnn.setRequestMethod(Connection.REGISTER,"POST");
+
+            request(cnn);
+        	}
         }else if (e.getActionCommand() == "Cancel"){
-        	moveTo(LoginActivity.class);
+            exit();
+        	//moveTo(LoginActivity.class);
         }
     }
 
 	// receive data, still process in background thread, heavy work here
 	public HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data){
-		if(requestID == Connection.GET_PATH){
-			return null;
-		}
 		return data;
 	}
 
@@ -119,10 +140,11 @@ public class RegisterActivity extends Base {
 
 		if(data != null){
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
+            if(requestID == Connection.REGISTER&&data.get("Status").equals("200")){
+                moveTo(MainActivity.class);
+            }
 		}
-        if(tag == 106){
-            //moveTo(LoginActivity.class);
-        }
+        
 	}
 
     // test

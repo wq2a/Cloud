@@ -33,6 +33,8 @@ public class Connection implements Runnable{
     public final static int REGISTER = 1;
     public final static int UPLOAD_FILE = 2;
     public final static int GET_PATH = 3;
+    public final static int GET_FILE = 4;
+    public final static int DELETE_PATH = 5;
 
     private int requestID;
     private int tag;
@@ -40,6 +42,7 @@ public class Connection implements Runnable{
     private StringBuffer requestPropertys;
     private HashMap<String,String> response;
     private FileManager fm;
+    private int fileLength;
 
     Callback callback;
     ReceiverCallback rcallback;
@@ -48,7 +51,9 @@ public class Connection implements Runnable{
         requestPropertys = new StringBuffer();
         response = new HashMap<String,String>();
         fm = null;
+        fileLength = 0;
     }
+    
     // Copy Constructor
     Connection(Connection cnn){
         this();
@@ -94,6 +99,9 @@ public class Connection implements Runnable{
             setRequestProperty("Auth",Auth.getInstance().toString());
             setRequestProperty("Connection","close");
         }*/
+        if(requestID == REGISTER){
+            setRequestProperty("Register","");
+        }
         setRequestProperty(AGENT,Info.getInstance().getOS());
         setRequestProperty(LANGUAGE,Info.getInstance().getLanguage());
     }
@@ -107,17 +115,25 @@ public class Connection implements Runnable{
         return requestID;
     }
     public void setRequestProperty(String field,String value){
-        if(field.equals("Path") && value.length()>0 
+        if(field.equals("LocPath") && value.length()>0 
                 && !(value.substring(value.length()-1)).equals("/")){
             fm = new FileManager(value);
-            setRequestProperty("Length",fm.getLength(value));
-
+            fileLength = Integer.parseInt(fm.getLength(value));
+        } else if (field.equals("Path") && value.length()>0){
+            if(fileLength == 0){
+                fm = null;
+            }
+            setRequestProperty("Length",""+fileLength);
             setRequestProperty("Connection","close");
-            requestPropertys.append(field+":"+SP+Auth.getInstance().getUsername()+"/"+value+CRLF);
-        }else{
+            requestPropertys.append(field+":"+SP+value+CRLF);
+        } else if(field.equals("Content")){
+            fileLength = value.length();
+            fm = new FileManager();
+            fm.setLength(fileLength);
+            fm.setContent(value);
+        } else {
             requestPropertys.append(field+":"+SP+value+CRLF);
         }
-        
     }
 
     public void run(){
@@ -129,14 +145,13 @@ public class Connection implements Runnable{
         String temp;
         ClientSocket client;
 
-        if(method.equals(PUT+CRLF)){
+        if(method.equals(PUT+CRLF) || method.equals(DELETE+CRLF) || requestID == Connection.GET_FILE){
             client = new ClientSocket();
         }else{
             client = ClientSocket.getInstance();
         }
 
-        temp = client.getResponse(toString(),fm);
-        
+        temp = client.getResponse(requestID,toString(),fm);
         if(!temp.isEmpty()){
             String r[] = temp.split("\\r?\\n");
             for(int i=0;i<r.length;i++){
@@ -153,10 +168,24 @@ public class Connection implements Runnable{
             }
         }
 
+        if(requestID == Connection.GET_FILE){// && response.get("Length")!=null){
+
+            int length = Integer.parseInt(response.get("Length"));
+            try{
+                String tt= client.getFile(length);
+                response.put("Content",tt);
+            }catch(Exception e){
+                System.out.println(e.getMessage());
+            }
+            
+        }
+
+        callback.response(requestID,tag,rcallback,response);
+
         if(response.get(CONNECTION)!=null && response.get(CONNECTION).equals(CLOSE)){
             client.disconnect();
         }
-        callback.response(requestID,tag,rcallback,response);
+        //callback.response(requestID,tag,rcallback,response);
     }
     
     public String toString(){

@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import cloud.client.Auth;
 import cloud.client.FileManager;
 import cloud.client.MyExecutor;
 import cloud.client.Receiver;
@@ -15,16 +16,18 @@ import cloud.client.ClientSocket;
 import cloud.client.Utils;
 
 public abstract class Base extends JFrame implements ReceiverCallback,WindowListener,ActionListener{
+
     public static Vector<JFrame> layouts = new Vector<JFrame>();
+
     public abstract void start();
 	public abstract HashMap<String,String> preReceive(int requestID,int tag,HashMap<String,String> data);
 	public abstract void receive(int requestID,int tag,HashMap<String,String> data);
+    public abstract void actionPerformed(ActionEvent e);
 
     Base(){
         layouts.add(this);
     }
 
-    
     public void moveTo(Class<?> c){
         //Utils.wait(1);
         this.setVisible(false);
@@ -37,13 +40,12 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
         } catch (IllegalAccessException ex) {
             System.err.println(ex);
         } catch(IllegalArgumentException ex){
-
+            System.err.println(ex);
         } catch(Exception ex){
-            ex.printStackTrace();
+            System.err.println(ex);
         }
         //MyExecutor.getInstance().shutdown();
         this.dispose();
-        System.out.println("moveTo");
     }
 
     public void exit(){
@@ -59,8 +61,6 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
         System.exit(0);
         */
     }
-
-
 
 	public void request(Connection connection){
 		Connection cnn = new Connection(this,connection, new Callback(){
@@ -78,10 +78,12 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
         MyExecutor.getInstance().exec(cnn);
 	}
 
-
-
 	public void windowClosing(WindowEvent e) {
         //dispose();
+        //exit();
+    }
+    
+    public void windowClosed(WindowEvent e) {
         //exit();
     }
 
@@ -90,9 +92,4 @@ public abstract class Base extends JFrame implements ReceiverCallback,WindowList
     public void windowIconified(WindowEvent e) {}
     public void windowDeiconified(WindowEvent e) {}
     public void windowDeactivated(WindowEvent e) {}
-    public void windowClosed(WindowEvent e) {
-        //exit();
-    }
-    public abstract void actionPerformed(ActionEvent e);
-
 }

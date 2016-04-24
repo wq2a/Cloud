@@ -12,13 +12,12 @@ public class ClientSocket{
     private InputStream in2;
     private StringBuffer response;
 
-    private String hostName;
+    public static String hostName = "52.87.188.170";//"54.165.222.100";
     private int portNumber;
 
     private String code;
 
     ClientSocket(){
-        hostName = "52.87.188.170";//"54.165.222.100";
         portNumber = 9900;
         response = new StringBuffer();
         code = Utils.Random();

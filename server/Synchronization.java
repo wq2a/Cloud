@@ -42,8 +42,7 @@ public class Synchronization implements Runnable{
 
 			syncs = syncDAO.selectSync();
 			if(!syncs.isEmpty()){
-				for(Sync sync:syncs){
-					//System.out.println(sync.getPath());
+				for(Sync sync : syncs){
 					out.println(sync.getType()+";"+sync.getLength()+";"+sync.getPath());
 
 					if(sync.getType()==2 && sync.getLength()>0){

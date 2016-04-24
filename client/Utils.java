@@ -26,4 +26,12 @@ public class Utils{
         random.nextBytes(bytes);
         return String.format("%064x", new BigInteger(1, bytes));
     }
+
+    public static String warning(String message){
+        return "<html><font color=\"#c00000;\">"+message+"</font></html>";
+    }
+
+    public static String info(String message){
+        return "<html><font color=\"#009933;\">"+message+"</font></html>";
+    }
 }

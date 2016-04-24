@@ -22,7 +22,7 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
     private JPanel main;
     private JLabel log;
 
-    private JButton upload,save,getfile_btn,editfile_btn,newfile_btn,newdir_btn,delfile_btn,logout;
+    private JButton upload,save,editfile_btn,newfile_btn,newdir_btn,delfile_btn,logout,refreshbtn;
     private GridLayout gl;
 
     private JPanel myPanel;
@@ -34,24 +34,53 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
     private ArrayList<String> nodePaths;
     FileNode foinit;
     private String currentPath = "";
+
+    ImageIcon saveImage = createImageIcon("../../resources/save.png");
+    ImageIcon logoutImage = createImageIcon("../../resources/close.png");
+    ImageIcon deleteImage = createImageIcon("../../resources/delete.png");
+    ImageIcon editImage = createImageIcon("../../resources/edit.png");
+    
     
 
     private void setLayout(){   
         nodePaths = new ArrayList<String>();
         setTitle("Main Program");
+        //setUndecorated(true);
+        
 
         main = new JPanel(new BorderLayout());
         
         log = new JLabel("");
-        upload = new JButton("upload");
-        save = new JButton("save");
-        logout = new JButton("logout");
-        getfile_btn = new JButton("getfile_btn");
-        editfile_btn = new JButton("editfile_btn");
-        newfile_btn = new JButton("newfile_btn");
-        newdir_btn = new JButton("newdir_btn");
-        delfile_btn = new JButton("delfile_btn");
+        upload = new JButton("Upload");
+        upload.setActionCommand("upload");
 
+        save = new JButton("Save");
+        save.setActionCommand("save");
+        
+        logout = new JButton("logout");
+        logout.setIcon(logoutImage);
+        logout.setActionCommand("logout");
+        logout.setBorder(BorderFactory.createEmptyBorder());
+        logout.setText("");
+        
+        editfile_btn = new JButton("Edit");
+        editfile_btn.setActionCommand("editfile_btn");
+
+        newfile_btn = new JButton("New File");
+        newfile_btn.setActionCommand("newfile_btn");
+
+        newdir_btn = new JButton("New Dir");
+        newdir_btn.setActionCommand("newdir_btn");
+
+        delfile_btn = new JButton("delfile_btn");
+        delfile_btn.setIcon(deleteImage);
+        delfile_btn.setActionCommand("delfile_btn");
+        delfile_btn.setBorder(BorderFactory.createEmptyBorder());
+        delfile_btn.setText("");
+
+        refreshbtn = new JButton("Refresh");
+        refreshbtn.setActionCommand("refreshbtn");
+        
         myPanel = new JPanel();
         fo = new FileNode("root");
         treeModel = new DefaultTreeModel(fo);
@@ -76,30 +105,44 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
 
         textArea = new JTextArea(30,35);
         textArea.setEditable(false);
+
         textArea.append("Printout Contents");
 
-        main.add(myPanel,BorderLayout.LINE_START);
+        main.add(myPanel,BorderLayout.WEST);//BorderLayout.LINE_START
         main.add(new JScrollPane(textArea),BorderLayout.CENTER); 
 
-        JPanel buttonpanel = new JPanel();
-        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
-        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        JPanel buttonpanel = new JPanel(new GridLayout(0, 10));
+        //buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        //buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        JPanel buttonpanelsub = new JPanel(new GridLayout(0, 4));
+        buttonpanelsub.add(delfile_btn);
+        buttonpanel.add(buttonpanelsub);
 
-        buttonpanel.add(upload);
-        buttonpanel.add(save);
-        buttonpanel.add(logout);
-        buttonpanel.add(getfile_btn);
-        buttonpanel.add(editfile_btn);
+        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
+        buttonpanel.add(Box.createRigidArea(new Dimension(1,0)));
         buttonpanel.add(newfile_btn);
         buttonpanel.add(newdir_btn);
-        buttonpanel.add(delfile_btn);
+        buttonpanel.add(refreshbtn);
+        buttonpanel.add(upload);
+        
+        
+        //buttonpanel.add(logout);
+        
+        buttonpanel.add(editfile_btn);
+        buttonpanel.add(save);
+        
  
-        main.add(buttonpanel,BorderLayout.PAGE_END);
+        main.add(buttonpanel,BorderLayout.SOUTH);//BorderLayout.PAGE_END
 
         JPanel logpanel = new JPanel();
-        logpanel.add(log);
-        //c.gridx = 0;
-        //c.gridy = 2;
+        logpanel.setLayout(new BorderLayout());
+        logpanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        //logpanel.add(newfile_btn,BorderLayout.WEST);
+        //logpanel.add(newdir_btn,BorderLayout.CENTER);
+        logpanel.add(log,BorderLayout.CENTER);
+        logpanel.add(logout,BorderLayout.EAST);
+
         main.add(logpanel,BorderLayout.PAGE_START);
 
         setContentPane(main);
@@ -120,10 +163,11 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         save.addActionListener(this);
         logout.addActionListener(this);
         newdir_btn.addActionListener(this);
-        getfile_btn.addActionListener(this);
+        
         editfile_btn.addActionListener(this);
         newfile_btn.addActionListener(this);
         delfile_btn.addActionListener(this);
+        refreshbtn.addActionListener(this);
         tree.addTreeSelectionListener(this);
         tree.addMouseListener(this);
     }
@@ -161,39 +205,54 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             exit();
 
         } else if (e.getActionCommand() == "save"){
-            Connection cnn = new Connection();
-            cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
-            cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-            cnn.setRequestProperty("Content",textArea.getText());
-            cnn.setRequestProperty("Path",currentPath);
-            request(cnn);
-            textArea.setEditable(false);
+            if(textArea.isEditable()){
+                Connection cnn = new Connection();
+                cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+                cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                cnn.setRequestProperty("Content",textArea.getText());
+                cnn.setRequestProperty("Path",currentPath);
+                request(cnn);
+                textArea.setEditable(false);
+            }
+            
         } else if (e.getActionCommand() == "newfile_btn"){
-            Random rand = new Random();
-            int  n = rand.nextInt(500) + 1;
-            Connection cnn = new Connection();
-            cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
-            cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-            cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_file.txt");
-            request(cnn);
+            if(currentPath.isEmpty()){
+                log.setText(Utils.warning("Please select a directory."));
+            }else{
+                Random rand = new Random();
+                int  n = rand.nextInt(500) + 1;
+                Connection cnn = new Connection();
+                cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+                cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_file.txt");
+                request(cnn);
+            }
         } else if (e.getActionCommand() == "newdir_btn"){
-            Random rand = new Random();
-            int  n = rand.nextInt(500) + 1;
-            Connection cnn = new Connection();
-            cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
-            cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-            cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_dir/");
-            request(cnn);
+            if(currentPath.isEmpty()){
+                log.setText(Utils.warning("Please select a directory."));
+            }else{
+                 Random rand = new Random();
+                int  n = rand.nextInt(500) + 1;
+                Connection cnn = new Connection();
+                cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+                cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                cnn.setRequestProperty("Path",currentPath.substring(0,currentPath.lastIndexOf("/"))+"/"+n+"new_dir/");
+                request(cnn);
+            }
+           
         } else if (e.getActionCommand() == "delfile_btn"){
-            Connection cnn = new Connection();
-            cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
-            cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-            cnn.setRequestProperty("Path",currentPath);
-            request(cnn);
+            if(currentPath.isEmpty()){
+                log.setText(Utils.warning("Please select a file or a directory."));
+            }else{
+                Connection cnn = new Connection();
+                cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
+                cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+                cnn.setRequestProperty("Path",currentPath);
+                request(cnn);
+            }
         } 
         else if (e.getActionCommand() == "editfile_btn"){
             // get lock
-            
             if (currentPath != null) {
                 if(!currentPath.isEmpty() && !(currentPath.substring(currentPath.length() - 1)).equals("/")){
                     Connection cnn = new Connection();
@@ -203,19 +262,18 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                     cnn.setRequestProperty("Auth",Auth.getInstance().toString());
                     request(cnn);
                     //textArea.setEditable(true);
+                }else{
+                    log.setText(Utils.warning("Please select a file."));
                 }
             }
-        } else if (e.getActionCommand() == "getfile_btn"){
-            
-            textArea.setEditable(false);
+        } else if (e.getActionCommand() == "refreshbtn"){
             Connection cnn = new Connection();
-            cnn.setRequestMethod(Connection.GET_FILE,"GET");
-            cnn.setRequestProperty("File","");
-            cnn.setRequestProperty("Path",currentPath);
+            cnn.setRequestMethod(Connection.GET_PATH,"GET");
+            cnn.setRequestProperty("Path","");
             cnn.setRequestProperty("Auth",Auth.getInstance().toString());
             request(cnn);
-            
         }
+        
     }
 
     public void valueChanged(TreeSelectionEvent e) {
@@ -224,7 +282,6 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             currentPath = "";
             return;
         } else {
-
             currentPath = node.getP();
         }
 
@@ -232,34 +289,10 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             //textArea.setText(node.getP());
         }
     }
+
     @Override
     public void mouseClicked(MouseEvent e) {
-        /*if (e.getClickCount() == 2) {
-            TreePath path = tree.getPathForLocation(e.getX(), e.getY());
-            if (path != null) {
-                System.out.println(path.getLastPathComponent());
-                FileNode node = (FileNode) tree.getLastSelectedPathComponent();
-                if (node == null) {
-                    currentPath = "";
-                    return;
-                } else {
-                    currentPath = node.getP();
-                
-                    if(node.getFileType() == 1){
-                        textArea.setEditable(false);
-                        Connection cnn = new Connection();
-                        cnn.setRequestMethod(Connection.GET_FILE,"GET");
-                        cnn.setRequestProperty("File","");
-                        cnn.setRequestProperty("EditMode","");
-                        cnn.setRequestProperty("Path",currentPath);
-                        cnn.setRequestProperty("Auth",Auth.getInstance().toString());
-                        request(cnn);
-                        //System.out.println("ppp"+currentPath);
-                    }
-                    textArea.setEditable(true);
-                }
-            }
-        }else */
+       
         if(e.getClickCount() == 1 || e.getClickCount() == 2){
             TreePath path = tree.getPathForLocation(e.getX(), e.getY());
             if (path != null) {
@@ -279,7 +312,6 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                         cnn.setRequestProperty("Path",currentPath);
                         cnn.setRequestProperty("Auth",Auth.getInstance().toString());
                         request(cnn);
-                        //System.out.println("ppp"+currentPath);
                     }else{
                         textArea.setText("");
                     }
@@ -332,7 +364,12 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
         
         if(data != null){
             System.out.println("ID:"+requestID+" Tag:"+tag+" Return Code:"+data.get("Status"));
-
+            if(data.get("Status").equals("200")){
+                log.setText(Utils.info("Return Code: "+data.get("Status")));
+            }else{
+                log.setText(Utils.warning("Return Code: "+data.get("Status")));
+            }
+            
             if(requestID == Connection.GET_FILE){
                 if(data.get("Content") != null){
                     textArea.setEditable(false);
@@ -341,10 +378,14 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                 
             }else if(requestID == Connection.LOCK){
                 if(data.get("Status").equals("423")){
-                    System.out.println("file locked!");
+                    // file locked
                     textArea.setEditable(false);
                 }else{
                     textArea.setEditable(true);
+                }
+            }else if(requestID == Connection.DELETE_PATH){
+                if(data.get("Status").equals("200")){
+                    textArea.setText("");
                 }
             }
 
@@ -358,23 +399,20 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
                     nodePathsTemp.add(ps[i]);
                 }
 
-                ArrayList<String> toDel = new ArrayList();
+                ArrayList<String> toDel = new ArrayList<String>();
                 //del
                 for(String temp:nodePaths){
                     if(!(nodePathsTemp.contains(temp))){
-                        //System.out.println("node name==''''"+temp);
                         String[] nodeName = temp.split("/");
                         FileNode parentNode = null;
                         FileNode delNode = fo;
                         String delName = "";
                         
                         for(String name:nodeName){
-                            //System.out.println("node name=="+delNode.getNodeName()+name);
+
                             if(delNode != null){
                                 parentNode = delNode;
                                 delNode = delNode.get(name);
-                            }else{
-                                System.out.println("is null node name=="+delNode);
                             }
                             delName = name;
                         }
@@ -417,5 +455,16 @@ public class MainActivity extends Base implements TreeSelectionListener, MouseLi
             
         }
         
+    }
+
+       /** Returns an ImageIcon, or null if the path was invalid. */
+    protected static ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = MainActivity.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            //System.err.println("Couldn't find file: " + path);
+            return null;
+        }
     }
 }

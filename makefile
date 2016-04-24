@@ -7,10 +7,10 @@ server:	server/*.java
 serverClean:	server/*.java
 	javac server/*.java -d .
 	java -cp .:lib/mysql-connector-java.jar cloud.server.Server 9900 1
-
+# sudo cp -r resources cloud/client/
 client:	client/*.java
 	javac client/*.java -d .
-	sudo cp -r resources cloud/client/
+	
 	java cloud.client.Client
 
 clean:

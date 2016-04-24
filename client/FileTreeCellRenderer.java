@@ -13,9 +13,9 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 
 class FileTreeCellRenderer extends DefaultTreeCellRenderer {
 
-    ImageIcon sharedFolder = createImageIcon("resources/sharedfolder.png");
-    ImageIcon folder = createImageIcon("resources/folder.png");//folder.icns");
-    ImageIcon gdoc = createImageIcon("resources/file.png");//preftrackchanges.png");
+    ImageIcon sharedFolder = createImageIcon("../../resources/sharedfolder.png");
+    ImageIcon folder = createImageIcon("../../resources/folder.png");//folder.icns");
+    ImageIcon gdoc = createImageIcon("../../resources/file.png");//preftrackchanges.png");
 
     @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value,

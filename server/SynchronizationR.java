@@ -18,7 +18,6 @@ public class SynchronizationR implements Runnable{
         
 	}
 
-
 	public void run() {
 		 try{
             ServerSocket serverSocket = new ServerSocket(this.portNumber);
@@ -74,9 +73,9 @@ public class SynchronizationR implements Runnable{
                 }
             }
 
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+            }catch(IOException e){
+                e.printStackTrace();
+            }
             
         } catch(IOException e){
             e.printStackTrace();

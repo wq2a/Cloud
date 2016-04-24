@@ -24,7 +24,6 @@ public class CloudPathDAO implements PathDAO {
 		String sql,subPath;
 		ResultSet rs;
 
-		System.out.println("1");
 		try{
 			if(contains(path)){
 				// already exist
@@ -44,7 +43,6 @@ public class CloudPathDAO implements PathDAO {
 					name = r[length-1];
 					subPath = path.substring(0,path.lastIndexOf(name));
 
-					System.out.println("="+subPath);
 					if(contains(subPath)){
 						parent = subPath.hashCode();
 						

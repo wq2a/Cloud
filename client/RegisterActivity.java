@@ -7,10 +7,6 @@ import javax.swing.border.CompoundBorder;
 
 public class RegisterActivity extends Base {
 
-    /* add more Request ID here 
-	   ...
-    */
-
     // views
     private JPanel main;
     private JLabel log,id,pw;
@@ -18,6 +14,7 @@ public class RegisterActivity extends Base {
     private JPasswordField password,cfpassword;
     private JButton registerbtn,cancelbtn;
     private GridLayout gl, gl2;
+    private boolean lock = false;
 
     // init the view layout here
     private void setLayout(){
@@ -98,23 +95,28 @@ public class RegisterActivity extends Base {
 	public void actionPerformed(ActionEvent e) {
         log.setText(e.getActionCommand());
         if(e.getActionCommand() == "Register") {
-        	//test();
-            Auth auth = Auth.getInstance();
-            Connection cnn = new Connection();
-            
-            String username = "example";
-            String password = "password";
-            auth.setAccount(username,password);
+            if(username.getText().isEmpty() || String.valueOf(password.getPassword()).isEmpty()){
+                log.setText(Utils.warning("Sorry, we don't recognize this account."));
+            }else{
+                if(lock)
+                    return;
+                lock = true;
+                Auth auth = Auth.getInstance();
+                Connection cnn = new Connection();
+                auth.setAccount(username.getText(),String.valueOf(password.getPassword()));
 
-            // these three are optional
-            cnn.setRequestProperty("Email","wq2a@mtmail.mtsu.edu");
-            cnn.setRequestProperty("First","FFF");
-            cnn.setRequestProperty("Last","LLL");
+                // these three are optional
+                /*
+                cnn.setRequestProperty("Email","wq2a@mtmail.mtsu.edu");
+                cnn.setRequestProperty("First","FFF");
+                cnn.setRequestProperty("Last","LLL");
+                */
+                cnn.setRequestProperty("Auth",auth.toString());
+                cnn.setRequestMethod(Connection.REGISTER,"POST");
 
-            cnn.setRequestProperty("Auth",auth.toString());
-            cnn.setRequestMethod(Connection.REGISTER,"POST");
-
-            request(cnn);
+                request(cnn);
+            }
+        	
 
         }else if (e.getActionCommand() == "Cancel"){
             exit();
@@ -136,13 +138,7 @@ public class RegisterActivity extends Base {
                 moveTo(MainActivity.class);
             }
 		}
+        lock = false;
         
 	}
-
-    // test
-    private void test() {
-    	System.out.println("show test case");
-    
-    
-    }
 }

@@ -14,7 +14,13 @@ client:	client/*.java
 	sudo cp -r resources cloud/client/
 	jar cvfe client.jar cloud.client.Client cloud/client
 
+pdf:
+	pandoc -o README.pdf README.md
+
+installPandoc:
+	brew install pandoc
+
 clean:
 	sudo rm -rf cloud client.jar
 
-.PHONY: all server client clean
+.PHONY: all server client pandoc installPandoc clean

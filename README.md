@@ -4,7 +4,7 @@ A prototype of the cloud environment.
 ### Prerequisities
 Before run the server you need to run mysql first, but no need to create the database.
 
-## Introduction
+## 1. Introduction
 ![Cloud Architecture](/images/cloud_architecture.png)
 
 ### Client
@@ -13,7 +13,7 @@ For the client side, we will develop a socket library based on Java socket progr
 For the server side, first of all, we will design socket communication with the client side. This implementation will handle all the requests of client side, including login, list the directory, transfer files and so on. We will define a server side protocol which will manage different types of requests, and also it will include the error detecting. Next, we will design socket communication between multiple server sides, in this project, we will assume there are only two servers. We will implement the synchronization of server side by defining a server side protocol which will be discussed in the aim 3. At last, we will consider about the security policy of server side.
 
 
-## Backgrounds
+## 2. Backgrounds
 ### Cloud Computing
 Cloud Computing is a technology that uses the internet and central remote servers to maintain data and applications. It allows consumers and businesses to use applications without installation and make it possible to access their personal files at any computer with internet access. This technology allows for much more efficient computing by centralizing data storage, processing and bandwidth.
 In cloud computing, there are three segments which are application, storage and connectivity. Each segment serves a different purpose and offers different products for businesses and individuals around the world. In June 2011, a study conducted by V1 found that 91% of senior IT professionals actually don't know what cloud computing is and two-thirds of senior finance professionals are clear by the concept, highlighting the young nature of the technology. In Sept 2011, an Aberdeen Group study found that disciplined companies achieved on average of 68% increase in their IT expense because of the cloud computing and the only 10% reduction in data center power costs.
@@ -26,7 +26,7 @@ A client opens a socket by specifying the host address and port number for the s
 #### Server Socket
 A server socket is a little more complex because it has to allow for multiple clients. The way this works is that the socket command creates a listening socket, and then new sockets are created when clients make connections to the server. Tcl takes care of all the details and makes this easy to use. You give the socket command a callback to execute when a client connects to your server socket. The callback is just a Tcl command. It gets as arguments the new socket and the address and port number of the connecting client.
 
-## Methods
+## 3. Methods
 
 ### Protocol (HTTP like protocol)
 In this project, we will generate HTTP like protocol.
@@ -39,12 +39,14 @@ In cryptography, a salt which is a secure random string that is used as an addit
 In the client side, we use the username as a salt combined with password and using SHA_256 to hash this combined string and get string H1. Then, pass both username and H1 to the server side. Next, in the server side, we will look for the received username in database and find another salt which used in server side and the H2 which was computed when user registered this account. At the end, we will hash h1 with the new salt and get string H2_, and the user will be validated if H2_ is the same as H2.
 
 
-## Results
-
-## Discussion
-
-
+## 4. Results
 ![Cloud Login](/images/cloud_login.png)
+![Cloud Register](/images/cloud_register.png)
+![Cloud Main](/images/cloud_main.png)
+## 5. Discussion
+
+
+
 
 
 ## Built With

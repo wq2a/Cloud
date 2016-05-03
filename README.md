@@ -12,6 +12,11 @@ The Status code is the same as HTTP protocol, we will use 200, 401, 404 and so o
 ### Salt (cryptography)
 In cryptography, a salt which is a secure random string that is used as an additional input to a one-way function that "hashes" a password. The main reason using salt is to defend against dictionary attacks versus a list of password hashes and against pre-computed rainbow table attacks. In this project, we use this argorithm to implement the user authentication. 
 In the client side, we use the username as a salt combined with password and using SHA_256 to hash this combined string and get string H1. Then, pass both username and H1 to the server side. Next, in the server side, we will look for the received username in database and find another salt which used in server side and the H2 which was computed when user registered this account. At the end, we will hash h1 with the new salt and get string H2_, and the user will be validated if H2_ is the same as H2.
+
+![GitHub Logo](/images/login.png)
+Format: ![Alt Text](url)
+
+
 ## Built With
 * Makefile
 ```

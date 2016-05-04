@@ -49,7 +49,8 @@ In the client side, we use the username as a salt combined with password and usi
 
 ![User Table](images/table1.png)
 
-
+### Models for hierarchical Data
+In order to store the file path tree, we are using closure table which is a simple and elegant way of storing and querying hierarchical data.
 
 ![Path Table](images/table2.png)
 

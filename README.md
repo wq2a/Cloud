@@ -39,6 +39,54 @@ In this project, we will generate HTTP like protocol.
 #### Request
 Several types of requests will be considered in this project, for example, GET, POST, PUT and DELETE. The GET method is used to get a file or get the name list of a directory. The POST method is used to check authentication or close the connect. The PUT method is used to upload a file. The DELETE method is used to delete a file on cloud. Meanwhile, user cloud define any type of property in the request.
 
+```java
+// Login
+Auth auth = Auth.getInstance();
+Connection cnn = new Connection();
+auth.setAccount(username.getText(),String.valueOf(password.getPassword()));
+cnn.setRequestProperty("Auth",auth.toString());
+cnn.setRequestMethod(Connection.LOGIN,"POST");
+request(cnn);
+```
+
+```java
+// Get the path tree
+Connection cnn = new Connection();
+cnn.setRequestMethod(Connection.GET_PATH,"GET");
+cnn.setRequestProperty("Path","");
+cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+request(cnn);
+```
+
+```java
+// Upload a file
+Connection cnn = new Connection();
+cnn.setRequestMethod(Connection.UPLOAD_FILE,"PUT");
+cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+cnn.setRequestProperty("Content",textArea.getText());
+cnn.setRequestProperty("Path",currentPath);
+request(cnn);
+```
+
+```java
+// Delete a file
+Connection cnn = new Connection();
+cnn.setRequestMethod(Connection.DELETE_PATH,"DELETE");
+cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+cnn.setRequestProperty("Path",currentPath);
+request(cnn);
+```
+
+```java
+// Lock a file
+Connection cnn = new Connection();
+cnn.setRequestMethod(Connection.LOCK,"POST");
+cnn.setRequestProperty("EditMode","");
+cnn.setRequestProperty("Path",currentPath);
+cnn.setRequestProperty("Auth",Auth.getInstance().toString());
+request(cnn);
+```
+
 #### Response
 The Status code is the same as HTTP protocol, we will use 200, 401, 404 and so on.
 

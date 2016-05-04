@@ -7,6 +7,13 @@ A prototype of the cloud environment.
 Before run the server you need to run mysql first, but no need to create the database.
 
 ## 1. Introduction
+Recently the cloud computing paradigm has been receiving significant excitement and attention in the media. There exist an increasing number of large companies that are offering cloud computing infrastructure products and service. Cloud database concept is start from sequence that shares a file between two (or many) different servers. In the paper, we have researched fundamental technique, socket programming, database and security, and made a demo cloud database server. For the demo program, we set three specific aims and all implementation is used by Java.
+
+- Specific Aim 1 We will implement client/server model with TCP/IP socket programming.
+- Specific Aim 2 We will develop convenient user interface.
+- Specific Aim 3 We will implement server synchronization for cloud computing.
+
+
 ![Cloud Architecture](images/cloud_architecture.png)
 
 ### Client

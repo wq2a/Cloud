@@ -67,7 +67,7 @@ In the client side, we use the username as a salt combined with password and usi
 | path   | varchar(255) | NO   |     | NULL    |
 | type   | int(11)      | NO   |     | 0       |
 
-
+!Path
 | Field      | Type    | Null | Key | Default |
 |------------|---------|------|-----|---------|
 | ancestor   | int(11) | NO   | PRI | NULL    |

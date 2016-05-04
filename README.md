@@ -47,9 +47,6 @@ For the cryptographic authentication, a salt which is a secure random string is 
 
 In the client side, we use the username as a salt combined with password and using SHA_256 to hash this combined string and get H1. Then, client side will pass both username and H1 to the server side. Next, in the server side, we will find the user in database and get another salt which is used in server side and the H2 which was computed when the user account is initialized. At the end, we will hash h1 with the new salt and get string H2_, and the user will be validated if H2_ is the same as H2.
 
-{|
-|+User Table
-|-
 | Field      | Type         | Null | Key | Default           |
 |------------|--------------|------|-----|-------------------|
 | id         | int(11)      | NO   | PRI | NULL              |
@@ -60,8 +57,22 @@ In the client side, we use the username as a salt combined with password and usi
 | lastname   | varchar(255) | YES  |     | NULL              |
 | email      | varchar(255) | YES  |     | NULL              |
 | createtime | timestamp    | NO   |     | CURRENT_TIMESTAMP |
-}
 
+
+| Field  | Type         | Null | Key | Default |
+|--------|--------------|------|-----|---------|
+| id     | int(11)      | NO   | PRI | NULL    |
+| name   | varchar(255) | NO   |     | NULL    |
+| parent | int(11)      | NO   |     | NULL    |
+| path   | varchar(255) | NO   |     | NULL    |
+| type   | int(11)      | NO   |     | 0       |
+
+
+| Field      | Type    | Null | Key | Default |
+|------------|---------|------|-----|---------|
+| ancestor   | int(11) | NO   | PRI | NULL    |
+| descendant | int(11) | NO   | PRI | NULL    |
+| depth      | int(11) | NO   |     | 0       |
 
 ## 4. Results
 

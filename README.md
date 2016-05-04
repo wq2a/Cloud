@@ -14,7 +14,7 @@ Recently the cloud computing paradigm has been receiving significant excitement 
 - Specific Aim 3 We will implement server synchronization for cloud computing.
 
 
-![Cloud Architecture](images/cloud_architecture.png)
+
 
 ### Client
 For the client side, we will develop a socket library based on Java socket programming. This library will define the client side protocol which is designed to communicate with the cloud server, and support applications for multiple devices such as the desktop and the mobile phone. Meanwhile, it will also implement the basic functions of cloud client, for instance, login to the account, show the file list of directory and basic file operations.
@@ -38,13 +38,17 @@ A client opens a socket by specifying the host address and port number for the s
 #### Server Socket
 A server socket is a little more complex because it has to allow for multiple clients. The way this works is that the socket command creates a listening socket, and then new sockets are created when clients make connections to the server. Tcl takes care of all the details and makes this easy to use. You give the socket command a callback to execute when a client connects to your server socket. The callback is just a Tcl command. It gets as arguments the new socket and the address and port number of the connecting client.
 
+### JFC/Swing
+Swing is a GUI widget toolkit for Java. It is part of Oracle's Java Foundation Classes (JFC) – an API for providing a graphical user interface (GUI) for Java programs. Swing was developed to provide a more sophisticated set of GUI components than the earlier Abstract Window Toolkit (AWT). Swing provides a native look and feel that emulates the look and feel of several platforms, and also supports a pluggable look and feel that allows applications to have a look and feel unrelated to the underlying platform.
+
 ## 3. Methods
 
-### Protocol (HTTP like protocol)
-In this project, we will generate HTTP like protocol.
+### Program Architecture
 
-#### Request
-Several types of requests will be considered in this project, for example, GET, POST, PUT and DELETE. The GET method is used to get a file or get the name list of a directory. The POST method is used to check authentication or close the connect. The PUT method is used to upload a file. The DELETE method is used to delete a file on cloud. Meanwhile, user cloud define any type of property in the request.
+![Cloud Architecture](images/cloud_architecture.png)
+
+### Protocol (HTTP like protocol)
+In this project, we will generate HTTP like protocol. Several types of requests will be considered in this project, for example, GET, POST, PUT and DELETE. The GET method is used to get a file or get the name list of a directory. The POST method is used to check authentication or close the connect. The PUT method is used to upload a file. The DELETE method is used to delete a file on cloud. Meanwhile, user cloud define any type of property in the request. The Status code is the same as HTTP protocol, we will use 200, 401, 404 and so on.
 
 ```java
 // Login
@@ -94,11 +98,17 @@ cnn.setRequestProperty("Auth",Auth.getInstance().toString());
 request(cnn);
 ```
 
-#### Response
-The Status code is the same as HTTP protocol, we will use 200, 401, 404 and so on.
+### Client Side
+For the client side, we will develop a socket library based on Java socket programming. This library will define the client side protocol, which is designed to communicate with the cloud server, and support applications for multiple devices such as the desktop and the mobile phone. Meanwhile, it will also implement the basic functions of cloud client, for instance, login to the account, show the file list of directory and basic file operations.
+
+### Server Side
+For the server side, first of all, we will design socket communication with the client side. This implementation will handle all the requests of client side, including login, list the directory, and transfer files and so on. We will define a server side protocol which will manage different types of requests, and also it will include the error detecting. Next, we will design socket communication between multiple server sides, in this project, we will assume there are only two servers. We will implement the synchronization of server side by defining a server side protocol which will be discussed in the aim 3. At last, we will consider about the security policy of server side.
+
+### Database Implementation
+MySQL provides connectivity for client applications developed in the Java programming language with MySQL Connector/J, a driver that implements the Java Database Connectivity (JDBC) API. We can handle the database part with the connector
 
 ### Salt Cryptography
-For the cryptographic authentication, a salt which is a secure random string is used as an additional input to a one-way function that "hashes" a password. The main reason using the salt cryptography is to defend against dictionary attacks versus a list of password hashes and against pre-computed rainbow table attacks. In this project, we use this argorithm to implement the user authentication. 
+Salt is random data that is used as an additional input to a one-way function that “hashes” a password or passphrase. The primary function of salts is to defend against dictionary attacks versus a list of password hashes and against pre-computed rainbow table attacks. A new salt is randomly generated for each password. In a typical setting, the salt and the password are concatenated and processed with a cryptographic hash function, and the resulting output (but not the original password) is stored with the salt in a database. Hashing allows for later authentication while protecting the plaintext password in the event that the authentication data store is compromised.
 
 In the client side, we use the username as a salt combined with password and using SHA_256 to hash this combined string and get H1. Then, client side will pass both username and H1 to the server side. Next, in the server side, we will find the user in database and get another salt which is used in server side and the H2 which was computed when the user account is initialized. At the end, we will hash h1 with the new salt and get string H2_, and the user will be validated if H2_ is the same as H2.
 
@@ -117,9 +127,18 @@ In order to store the file path tree, we are using closure table which is a simp
 
 ## 4. Results
 
+### Login Panel
+When users try to login the server, Client socket send a message including Id and Password to chosen server.
+
 ![Cloud Login](images/cloud_login.png)
 
+### Register Panel
+Resister panel provides the function that creating new account. The panel rejects a message when Password and Confirm Password contents are different, and server response whether create a new one or duplicate.
+
 ![Cloud Register](images/cloud_register.png)
+
+### Main Panel
+Main panel consists of two sub-panels. Left panel provide file tree, so that users can explore the folder and file. Right panel provide file contents, and also users can edit the contents.
 
 ![Cloud Main](images/cloud_main.png)
 
